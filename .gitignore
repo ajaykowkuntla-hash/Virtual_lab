@@ -2,15 +2,18 @@
 .env
 .env.*
 !.env.example
+env/
 
 # Python
 venv/
 __pycache__/
 *.pyc
 *.pyo
+*.py[cod]
+*$py.class
 .pytest_cache/
 
-# Node (frontend, if in the same repo)
+# Node (frontend)
 node_modules/
 .next/
 dist/
@@ -23,11 +26,18 @@ build/
 
 # OS/editor junk
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 .vscode/
 .idea/
 
-# Logs
+# Logs & temp files
 *.log
+output_plot.png
 
 # Docker / Execution Engine
 temp/
