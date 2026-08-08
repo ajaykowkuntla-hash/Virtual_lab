@@ -1,0 +1,443 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LabCentral Virtual Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#f9f9f9",
+                      "secondary": "#5e5e5e",
+                      "panel-bg": "#F3F2EF",
+                      "inverse-primary": "#c6c6c6",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#4c4546",
+                      "on-surface": "#1b1b1b",
+                      "outline": "#7e7576",
+                      "secondary-container": "#e1dfdf",
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-tint": "#5e5e5e",
+                      "surface-container": "#eeeeee",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "secondary-fixed-dim": "#c7c6c6",
+                      "primary-fixed": "#e2e2e2",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "card-bg": "#FCFCFB",
+                      "secondary-fixed": "#e4e2e2",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#464747",
+                      "on-primary-fixed-variant": "#474747",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "on-primary-fixed": "#1b1b1b",
+                      "on-secondary-container": "#626262",
+                      "neural-pink": "#F43F5E",
+                      "tertiary-container": "#1b1b1b",
+                      "on-tertiary-container": "#848484",
+                      "surface-container-highest": "#e2e2e2",
+                      "surface-container-lowest": "#ffffff",
+                      "neural-purple": "#8B5CF6",
+                      "on-primary-container": "#848484",
+                      "primary": "#000000",
+                      "canvas-bg": "#F7F7F5",
+                      "neural-blue": "#3B82F6",
+                      "on-tertiary": "#ffffff",
+                      "surface": "#f9f9f9",
+                      "on-background": "#1b1b1b",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#000000",
+                      "success-emerald": "#10B981",
+                      "primary-container": "#1b1b1b",
+                      "border-subtle": "#E7E7E4",
+                      "surface-bright": "#f9f9f9",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#1b1b1b",
+                      "outline-variant": "#cfc4c5",
+                      "surface-variant": "#e2e2e2",
+                      "surface-container-high": "#e8e8e8",
+                      "surface-dim": "#dadada",
+                      "surface-container-low": "#f3f3f3",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#303030"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "edge_margin": "32px",
+                      "unit_base": "8px",
+                      "section_gap_mobile": "80px",
+                      "section_gap_desktop": "180px",
+                      "gutter": "32px",
+                      "container_max": "1280px"
+              },
+              "fontFamily": {
+                      "mono-metrics": [
+                              "Geist"
+                      ],
+                      "h1": [
+                              "Geist"
+                      ],
+                      "label-caps": [
+                              "Geist"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "h1-mobile": [
+                              "Geist"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "h2-mobile": [
+                              "Geist"
+                      ],
+                      "h2": [
+                              "Geist"
+                      ],
+                      "h3": [
+                              "Geist"
+                      ]
+              },
+              "fontSize": {
+                      "mono-metrics": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h1": [
+                              "84px",
+                              {
+                                      "lineHeight": "1.05",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h1-mobile": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "letterSpacing": "0",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h2": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.03em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h3": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.4);
+        }
+        .code-bg { background-color: #1E1E1E; }
+        .code-text { color: #D4D4D4; }
+        .code-keyword { color: #569CD6; }
+        .code-string { color: #CE9178; }
+        .code-comment { color: #6A9955; }
+        .code-function { color: #DCDCAA; }
+        .code-number { color: #B5CEA8; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .orb-blur {
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-canvas-bg text-on-surface min-h-screen flex relative overflow-hidden">
+<!-- Background Orbs -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-neural-blue orb-blur mix-blend-multiply"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-neural-purple orb-blur mix-blend-multiply"></div>
+</div>
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-72 py-8 z-40 bg-panel-bg border-r border-border-subtle">
+<div class="px-8 mb-12 flex flex-col gap-2">
+<h2 class="font-h2-mobile text-h2-mobile font-bold text-primary">DigiLab</h2>
+<span class="font-label-caps text-label-caps text-secondary uppercase">Engineering Virtual Lab</span>
+</div>
+<div class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-primary text-white shadow-sm rounded-lg px-4 py-3 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">science</span>
+<span class="font-label-caps text-label-caps uppercase">Virtual Lab</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps uppercase">Assignments</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Timetable</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-caps text-label-caps uppercase">Updates</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="font-label-caps text-label-caps uppercase">Helpdesk</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps uppercase">Profile</span>
+</a>
+</div>
+<div class="px-4 space-y-2">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar (Mobile Only) -->
+<header class="fixed top-0 left-0 md:left-72 w-full md:w-[calc(100%-288px)] z-50 flex justify-between items-center px-edge_margin h-[72px] bg-white/25 backdrop-blur-3xl border-b border-border-subtle">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="md:hidden font-h3 text-h3 font-semibold text-primary">LabCentral</h2>
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-full border border-border-subtle max-w-xs">
+<span class="material-symbols-outlined text-secondary">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full ml-2" placeholder="Search labs, assignments..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-2 md:gap-4">
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-neural-pink rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-border-subtle mx-2 hidden md:block"></div>
+<button class="flex items-center gap-2 hover:bg-surface-container-low p-1 pr-3 rounded-full transition-colors">
+<div class="w-8 h-8 rounded-full bg-neural-purple flex items-center justify-center text-white font-bold text-sm">A</div>
+<span class="hidden md:block font-label-caps text-label-caps">Alex</span>
+</button>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 relative z-10 w-full md:ml-72 pt-[72px] h-screen flex flex-col bg-background">
+<!-- Top Toolbar -->
+<header class="h-[72px] shrink-0 flex items-center justify-between px-8 border-b border-border-subtle bg-white/50 backdrop-blur-md z-30">
+<div class="flex items-center gap-4">
+<h2 class="font-h3 text-h3 font-semibold text-primary">Signal Analysis &amp; Systems Laboratory</h2>
+<span class="px-2 py-1 bg-surface-container-high rounded-full font-mono-metrics text-mono-metrics text-secondary">ID:402</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">waves</span>
+<span class="font-label-caps text-label-caps">Generate</span>
+</button>
+<div class="h-6 w-[1px] bg-border-subtle mx-2"></div>
+<button class="flex items-center gap-2 px-6 py-2 rounded-full bg-success-emerald text-white hover:opacity-90 transition-opacity shadow-lg shadow-success-emerald/20">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="font-label-caps text-label-caps font-bold">Run</span>
+</button><button class="flex items-center gap-2 px-6 py-2 rounded-full bg-neural-blue text-white hover:opacity-90 transition-opacity shadow-lg shadow-neural-blue/20">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span class="font-label-caps text-label-caps font-bold">Submit&nbsp;</span>
+</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-full border border-outline text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">stop</span>
+</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-full border border-outline text-secondary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">restart_alt</span>
+</button>
+</div>
+</header>
+<!-- Three Column Layout -->
+<div class="flex-1 flex overflow-hidden justify-between">
+<!-- Left Panel: Info -->
+<!-- Center: Editor & Console -->
+<div class="flex-1 flex flex-col border-border-subtle">
+<!-- Editor -->
+<div class="flex-1 flex flex-col code-bg overflow-hidden relative">
+<div class="h-10 border-b border-[#333] flex items-center px-4 bg-[#252526] gap-4"><div class="flex items-center gap-3 mr-4 border-r border-[#333] pr-4">
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-success-emerald/10 rounded-full">
+<span class="material-symbols-outlined text-success-emerald text-[14px] font-bold">check_circle</span>
+<span class="text-success-emerald font-mono-metrics text-[10px] uppercase">Verified</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[#858585] text-[10px] font-mono-metrics leading-none">Output match: 99.8%</span>
+<span class="text-[#858585] text-[9px] font-mono-metrics opacity-60">(RMS Error: 0.002)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-[#1E1E1E] text-[#E7E7E4] font-mono-metrics text-mono-metrics border-t-2 border-neural-blue">
+<span class="material-symbols-outlined text-[14px] text-neural-blue">code</span>
+                            main.m
+                        </div>
+<div class="flex items-center gap-2 px-3 py-1 text-[#858585] font-mono-metrics text-mono-metrics">
+                            utils.m
+                        </div><div class="flex items-center gap-2 px-3 py-1 text-[#858585] font-mono-metrics text-mono-metrics cursor-pointer hover:text-[#E7E7E4]">
+    Instructions
+</div>
+<button class="flex items-center gap-1.5 px-2 py-1 text-[#858585] hover:text-[#E7E7E4] transition-colors mr-2" title="Exit Full Screen"><span class="material-symbols-outlined text-[16px]">fullscreen_exit</span><span class="font-mono-metrics text-[10px] uppercase">Minimize</span></button><div class="ml-auto flex items-center gap-1.5 text-[#858585] font-mono-metrics text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#858585]"></span>
+    Saved
+</div>
+</div>
+<div class="flex-1 overflow-auto p-4 font-mono-metrics text-mono-metrics text-[14px] leading-relaxed flex">
+<!-- Line Numbers -->
+<div class="text-[#858585] text-right pr-4 select-none flex flex-col">
+<span class="">1</span><span class="">2</span><span class="">3</span><span class="">4</span><span class="">5</span><span class="">6</span><span class="">7</span><span class="">8</span><span class="">9</span><span class="">10</span><span class="">11</span><span class="">12</span><span class="">13</span><span class="">14</span><span class="">15</span>
+</div>
+<!-- Code -->
+<div class="code-text flex-1 whitespace-pre">
+<span class="code-comment">% Generate and analyze a mixed signal</span>
+<span class="code-keyword">fs</span> = <span class="code-number">1000</span>; <span class="code-comment">% Sampling frequency</span>
+<span class="code-keyword">t</span> = <span class="code-number">0</span>:<span class="code-number">1</span>/<span class="code-keyword">fs</span>:<span class="code-number">1</span>-<span class="code-number">1</span>/<span class="code-keyword">fs</span>; <span class="code-comment">% Time vector</span>
+<span class="code-comment">% Signal components</span>
+<span class="code-keyword">f1</span> = <span class="code-number">50</span>;  <span class="code-comment">% Hz</span>
+<span class="code-keyword">f2</span> = <span class="code-number">120</span>; <span class="code-comment">% Hz</span>
+<span class="code-keyword">x</span> = <span class="code-number">0.7</span>*<span class="code-function">sin</span>(<span class="code-number">2</span>*<span class="code-keyword">pi</span>*<span class="code-keyword">f1</span>*<span class="code-keyword">t</span>) + <span class="code-function">sin</span>(<span class="code-number">2</span>*<span class="code-keyword">pi</span>*<span class="code-keyword">f2</span>*<span class="code-keyword">t</span>);
+
+<span class="code-comment">% Add some noise</span>
+<span class="code-keyword">y</span> = <span class="code-keyword">x</span> + <span class="code-number">2</span>*<span class="code-function">randn</span>(<span class="code-function">size</span>(<span class="code-keyword">t</span>));
+
+<span class="code-comment">% Compute FFT</span>
+<span class="code-keyword">Y</span> = <span class="code-function">fft</span>(<span class="code-keyword">y</span>);
+<span class="code-keyword">P2</span> = <span class="code-function">abs</span>(<span class="code-keyword">Y</span>/<span class="code-keyword">L</span>);
+                        </div>
+</div>
+</div>
+<!-- Console -->
+<div class="h-48 bg-[#181818] border-t border-[#333] flex flex-col">
+<div class="h-8 border-b border-[#333] flex items-center px-4 bg-[#252526]">
+<span class="font-label-caps text-label-caps text-[#E7E7E4]">Terminal</span>
+</div>
+<div class="p-3 font-mono-metrics text-mono-metrics text-[12px] text-[#A3A3A3] overflow-y-auto">
+<div class="text-success-emerald">&gt; System initialized. Ready.</div>
+<div class="">&gt; Running main.m...</div>
+<div class="">&gt; Generating signal: fs=1000Hz, duration=1s</div>
+<div class="">&gt; Computing FFT...</div>
+<div class="text-success-emerald">&gt; Execution completed successfully (0.042s)</div>
+<div class="flex items-center mt-2">
+<span class="text-neural-blue mr-2">LAB-402 $</span> <span class="animate-pulse w-2 h-4 bg-[#A3A3A3] inline-block"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Panel: Waveforms -->
+<div class="w-80 p-6 bg-transparent overflow-y-auto flex flex-col gap-6 relative transition-all duration-300 hidden" id="results-column">
+<!-- Initial State Card -->
+<!-- Loading State (Hidden by default) -->
+<div class="hidden relative z-10 glass-panel rounded-3xl p-8 shadow-lg shadow-black/5 flex flex-col items-center justify-center text-center gap-4 border border-white/60" id="results-loading">
+<div class="w-10 h-10 border-4 border-neural-blue border-t-transparent rounded-full animate-spin"></div>
+<p class="text-body-md text-secondary">Running your code...</p>
+</div>
+<!-- Success State (Hidden by default) -->
+<div class="hidden flex flex-col gap-6" id="results-success">
+<!-- Time Domain Card -->
+<div class="relative z-10 glass-panel rounded-3xl p-5 shadow-lg shadow-black/5 flex flex-col gap-4 border border-white/60">
+<div class="flex items-center justify-between">
+<h4 class="font-label-caps text-label-caps text-primary">Time Domain</h4>
+<span class="flex items-center gap-1 text-[10px] font-mono-metrics bg-surface-container px-2 py-1 rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-success-emerald animate-pulse"></span> LIVE</span>
+</div>
+<div class="h-40 bg-white/50 rounded-xl border border-white/60 relative overflow-hidden flex items-center justify-center">
+<img class="absolute inset-0 w-full h-full object-cover mix-blend-darken opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF7kprTYcUtsYGLDxcJJPPw1TLjei1NZxxSMYdMoSa0pfePXGBrnTahIUjCqFvgt90ykqVAhjR1Cw_WPgOJSDCTpqNRNQvbJ5MGulZzMyhhWFLUTxN_iIibEt7nMeGk3D7wcKbOWcKM7CfpJ2Ln97fLTiZLsz1-w9pQHmgOlSre7O8jMDBb3jq8trt1IoSo6cL-ywdmiGHoA5uLlikZ9HnGeul8OoElNHkhTNQMezmKkjNf1P2_mFDrbf5EqeyPSqtShmXZ-nnJkJ4">
+</div>
+</div>
+<!-- Frequency Domain Card -->
+<div class="relative z-10 glass-panel rounded-3xl p-5 shadow-lg shadow-black/5 flex flex-col gap-4 border border-white/60">
+<div class="flex items-center justify-between">
+<h4 class="font-label-caps text-label-caps text-primary">Frequency Domain (FFT)</h4>
+<div class="flex gap-2">
+<button class="p-1 rounded bg-surface-container hover:bg-surface-container-high"><span class="material-symbols-outlined text-[14px]">download</span></button>
+</div>
+</div>
+<div class="h-40 bg-white/50 rounded-xl border border-white/60 relative overflow-hidden flex items-center justify-center">
+<img alt="Frequency Domain (FFT) Analysis" class="absolute inset-0 w-full h-full object-cover mix-blend-darken opacity-80" src="https://lh3.googleusercontent.com/aida/AP1WRLtewl_zpUp7oOrRJ7uTi_60vHRjfCp8siMcnpbA64SIAwf-UCpfAFk_shLosA7i9OwqxkQyHALuRK7M8I-a-p_x5UyQpUm8Ip5oxn1Jv07gKROFoL341X9e37xxqQs05WOz_FZqFdGbsMTt-vOQKP0fELADHWaAhjHVuac_YBteXpc7YwsaHPwNAOqClGgiYms35RLdb0jc7IT4XJkT4jwnV7HD1-gaCuCGyfHK2qJc19FgjGVhJMkAX-s">
+</div>
+</div>
+</div>
+<!-- Error State (Hidden by default) -->
+<div class="hidden relative z-10 glass-panel rounded-3xl p-5 shadow-lg shadow-black/5 flex flex-col gap-4 border border-white/60" id="results-error">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[20px]">error</span>
+<h4 class="font-label-caps text-label-caps">Run Failed</h4>
+</div>
+<div class="bg-error/10 p-4 rounded-lg border border-error/20">
+<code class="font-mono-metrics text-[12px] text-error leading-relaxed">Error: line 12: 'fs' is undefined</code>
+</div>
+<p class="text-[12px] text-secondary">Fix the highlighted issue and run again.</p>
+</div>
+</div>
+</div>
+<!-- Floating Signal Generator Panel -->
+</main>
+
+
+
+
+
+
+</body></html>

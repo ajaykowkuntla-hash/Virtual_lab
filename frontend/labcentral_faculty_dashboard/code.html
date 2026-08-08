@@ -1,0 +1,414 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LabCentral | Faculty Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#f9f9f9",
+                      "secondary": "#5e5e5e",
+                      "panel-bg": "#F3F2EF",
+                      "inverse-primary": "#c6c6c6",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#4c4546",
+                      "on-surface": "#1b1b1b",
+                      "outline": "#7e7576",
+                      "secondary-container": "#e1dfdf",
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-tint": "#5e5e5e",
+                      "surface-container": "#eeeeee",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "secondary-fixed-dim": "#c7c6c6",
+                      "primary-fixed": "#e2e2e2",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "card-bg": "#FCFCFB",
+                      "secondary-fixed": "#e4e2e2",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#464747",
+                      "on-primary-fixed-variant": "#474747",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "on-primary-fixed": "#1b1b1b",
+                      "on-secondary-container": "#626262",
+                      "neural-pink": "#F43F5E",
+                      "tertiary-container": "#1b1b1b",
+                      "on-tertiary-container": "#848484",
+                      "surface-container-highest": "#e2e2e2",
+                      "surface-container-lowest": "#ffffff",
+                      "neural-purple": "#8B5CF6",
+                      "on-primary-container": "#848484",
+                      "primary": "#000000",
+                      "canvas-bg": "#F7F7F5",
+                      "neural-blue": "#3B82F6",
+                      "on-tertiary": "#ffffff",
+                      "surface": "#f9f9f9",
+                      "on-background": "#1b1b1b",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#000000",
+                      "success-emerald": "#10B981",
+                      "primary-container": "#1b1b1b",
+                      "border-subtle": "#E7E7E4",
+                      "surface-bright": "#f9f9f9",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#1b1b1b",
+                      "outline-variant": "#cfc4c5",
+                      "surface-variant": "#e2e2e2",
+                      "surface-container-high": "#e8e8e8",
+                      "surface-dim": "#dadada",
+                      "surface-container-low": "#f3f3f3",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#303030"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "edge_margin": "32px",
+                      "unit_base": "8px",
+                      "section_gap_mobile": "80px",
+                      "section_gap_desktop": "180px",
+                      "gutter": "32px",
+                      "container_max": "1280px"
+              },
+              "fontFamily": {
+                      "mono-metrics": ["Geist"],
+                      "h1": ["Geist"],
+                      "label-caps": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "h1-mobile": ["Geist"],
+                      "body-md": ["Geist"],
+                      "h2-mobile": ["Geist"],
+                      "h2": ["Geist"],
+                      "h3": ["Geist"]
+              },
+              "fontSize": {
+                      "mono-metrics": ["12px", { "lineHeight": "1", "letterSpacing": "0", "fontWeight": "700" }],
+                      "h1": ["84px", { "lineHeight": "1.05", "letterSpacing": "-0.04em", "fontWeight": "600" }],
+                      "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                      "body-lg": ["18px", { "lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                      "h1-mobile": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600" }],
+                      "body-md": ["16px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+                      "h2-mobile": ["32px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                      "h2": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+                      "h3": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&display=swap');
+        body { font-family: 'Geist', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border: 0.5px solid rgba(255, 255, 255, 0.7);
+        }
+        .orb-blur {
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-30px, 50px) scale(1.2); }
+            66% { transform: translate(20px, -20px) scale(0.8); }
+        }
+        .animate-float-1 { animation: float1 20s infinite ease-in-out; }
+        .animate-float-2 { animation: float2 25s infinite ease-in-out; }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        .stagger-6 { animation-delay: 0.6s; }
+        .stagger-7 { animation-delay: 0.7s; }
+        .stagger-8 { animation-delay: 0.8s; }
+        .stagger-9 { animation-delay: 0.9s; }
+    </style>
+</head>
+<body class="bg-canvas-bg text-on-surface min-h-screen flex relative overflow-x-hidden">
+<!-- Background Orbs -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-neural-blue orb-blur mix-blend-multiply animate-float-1"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-neural-purple orb-blur mix-blend-multiply animate-float-2"></div>
+</div>
+<!-- SideNavBar (Faculty Version) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-72 py-8 z-40 bg-panel-bg border-r border-border-subtle">
+<div class="px-8 mb-12 flex flex-col gap-2">
+<h2 class="font-h2-mobile text-h2-mobile font-bold text-primary">DigiLab</h2>
+<span class="font-label-caps text-label-caps text-secondary uppercase">Faculty Portal</span>
+</div>
+<div class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 bg-primary text-white shadow-sm rounded-lg px-4 py-3 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-caps text-label-caps uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps uppercase">Manage Labs</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps uppercase">Submissions</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps uppercase">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Schedule</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-caps text-label-caps uppercase">Announcements</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps uppercase">Profile</span>
+</a>
+</div>
+<div class="px-4 space-y-2">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 md:left-72 w-full md:w-[calc(100%-288px)] z-50 flex justify-between items-center px-edge_margin h-[72px] bg-white/25 backdrop-blur-3xl border-b border-border-subtle">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="md:hidden font-h3 text-h3 font-semibold text-primary">LabCentral</h2>
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-full border border-border-subtle max-w-xs">
+<span class="material-symbols-outlined text-secondary">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full ml-2" placeholder="Search students, submissions..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-2 md:gap-4">
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-neural-pink rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-border-subtle mx-2 hidden md:block"></div>
+<button class="flex items-center gap-2 hover:bg-surface-container-low p-1 pr-3 rounded-full transition-colors">
+<div class="w-8 h-8 rounded-full bg-neural-purple flex items-center justify-center text-white font-bold text-sm">V</div>
+<span class="hidden md:block font-label-caps text-label-caps">Dr. Vance</span>
+</button>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 relative z-10 w-full md:ml-72 pt-[72px] min-h-screen flex flex-col bg-background">
+<div class="p-8 md:p-12 max-w-[1200px] mx-auto w-full space-y-10">
+<!-- Header section -->
+<header class="fade-in-up stagger-1">
+<h1 class="text-[56px] font-semibold text-primary tracking-tight leading-none mb-4">Welcome back, Dr. Vance.</h1>
+<div class="flex items-center gap-4">
+<p class="font-body-lg text-secondary">Fall Semester 2024 • Engineering Thermodynamics</p>
+<span class="h-4 w-[1px] bg-border-subtle"></span>
+<button class="text-neural-blue font-label-caps text-label-caps flex items-center gap-1 hover:underline">
+                        Faculty Controls <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</header>
+<!-- Summary Statistic Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Active Labs -->
+<div class="glass-panel rounded-3xl p-6 shadow-lg shadow-black/5 flex flex-col gap-4 fade-in-up stagger-2">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-neural-blue text-[24px]">science</span>
+<span class="font-mono-metrics text-mono-metrics text-secondary">2 Active</span>
+</div>
+<div>
+<div class="text-[32px] font-semibold text-primary">12</div>
+<div class="font-label-caps text-label-caps text-secondary uppercase">Total Labs Created</div>
+</div>
+</div>
+<!-- Pending Grading -->
+<div class="glass-panel rounded-3xl p-6 shadow-lg shadow-black/5 flex flex-col gap-4 fade-in-up stagger-3">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-neural-pink text-[24px]">fact_check</span>
+<span class="flex items-center gap-1 text-[10px] font-mono-metrics bg-surface-container px-2 py-1 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-neural-pink animate-pulse"></span> NEEDS REVIEW
+                        </span>
+</div>
+<div>
+<div class="text-[32px] font-semibold text-primary">28</div>
+<div class="font-label-caps text-label-caps text-secondary uppercase">Pending Submissions</div>
+</div>
+</div>
+<!-- Average Attendance -->
+<div class="glass-panel rounded-3xl p-6 shadow-lg shadow-black/5 flex flex-col gap-4 fade-in-up stagger-4">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-success-emerald text-[24px]">groups</span>
+</div>
+<div>
+<div class="text-[32px] font-semibold text-primary">89%</div>
+<div class="font-label-caps text-label-caps text-secondary uppercase">Class Attendance</div>
+</div>
+</div>
+<!-- Class Average -->
+<div class="glass-panel rounded-3xl p-6 shadow-lg shadow-black/5 flex flex-col gap-4 fade-in-up stagger-5">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-neural-purple text-[24px]">bar_chart</span>
+</div>
+<div>
+<div class="text-[32px] font-semibold text-primary">B+</div>
+<div class="font-label-caps text-label-caps text-secondary uppercase">Class Average</div>
+</div>
+</div>
+</div>
+<!-- Asymmetrical Grid: Main Focus Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Large Feature: Current Live Session -->
+<div class="lg:col-span-2 space-y-8">
+<!-- Premium Styled Action Card -->
+<div class="relative group fade-in-up stagger-6">
+<div class="absolute -inset-1 bg-gradient-to-r from-neural-blue to-neural-purple rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+<div class="relative glass-panel rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border border-white/60">
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<span class="px-2 py-1 bg-neural-blue/10 rounded-full font-mono-metrics text-mono-metrics text-neural-blue">LIVE SESSION</span>
+<span class="px-2 py-1 bg-surface-container-high rounded-full font-mono-metrics text-mono-metrics text-secondary">THERMO-102</span>
+</div>
+<h3 class="text-h3 font-semibold text-primary">Thermodynamic Cycles: Rankine</h3>
+<p class="font-body-md text-secondary max-w-md">24 out of 30 students are currently connected. 18 are in the data collection phase.</p>
+</div>
+<button class="shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all shadow-xl shadow-black/10">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-caps text-label-caps font-bold">Monitor Session</span>
+</button>
+</div>
+</div>
+<!-- Performance Visualizer -->
+<div class="glass-panel rounded-3xl p-8 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-7">
+<div class="flex items-center justify-between">
+<h4 class="font-label-caps text-label-caps text-primary">Class Performance Trend</h4>
+<div class="flex gap-2">
+<button class="p-1.5 rounded-full bg-surface-container hover:bg-surface-container-high"><span class="material-symbols-outlined text-[16px]">show_chart</span></button>
+</div>
+</div>
+<div class="h-56 bg-white/40 rounded-2xl border border-white/60 relative overflow-hidden flex items-end justify-between px-8 pb-4">
+<div class="w-8 bg-surface-container-high rounded-full h-[40%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[60%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[30%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[85%]"></div>
+<div class="w-8 bg-neural-blue/80 rounded-full h-[75%] shadow-[0_0_20px_rgba(59,130,246,0.3)]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[70%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[50%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[90%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[65%]"></div>
+<div class="w-8 bg-surface-container-high rounded-full h-[80%]"></div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Schedule & Activity -->
+<div class="space-y-8">
+<!-- Upcoming Teaching Schedule -->
+<div class="glass-panel rounded-3xl p-6 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-8">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<h4 class="font-label-caps text-label-caps text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span> Upcoming Sessions
+                            </h4>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-4 rounded-2xl border border-border-subtle hover:bg-white/40 transition-colors">
+<div class="w-12 h-12 flex flex-col items-center justify-center bg-surface-container-low rounded-xl">
+<span class="text-[10px] font-bold text-secondary uppercase">Oct</span>
+<span class="text-body-lg font-bold text-primary">12</span>
+</div>
+<div class="flex-1">
+<h5 class="text-body-md font-semibold text-primary">Fluid Mechanics Lab</h5>
+<p class="text-[12px] text-secondary">10:00 AM - 12:00 PM</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-2xl border border-border-subtle hover:bg-white/40 transition-colors">
+<div class="w-12 h-12 flex flex-col items-center justify-center bg-surface-container-low rounded-xl">
+<span class="text-[10px] font-bold text-secondary uppercase">Oct</span>
+<span class="text-body-lg font-bold text-primary">15</span>
+</div>
+<div class="flex-1">
+<h5 class="text-body-md font-semibold text-primary">Heat Transfer Demo</h5>
+<p class="text-[12px] text-secondary">02:00 PM - 03:30 PM</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex flex-col items-center gap-2 p-6 glass-panel rounded-3xl hover:bg-white/50 transition-all text-secondary hover:text-primary border border-white/40">
+<span class="material-symbols-outlined text-[24px]">add_circle</span>
+<span class="font-label-caps text-[10px] uppercase">New Lab</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-6 glass-panel rounded-3xl hover:bg-white/50 transition-all text-secondary hover:text-primary border border-white/40">
+<span class="material-symbols-outlined text-[24px]">download</span>
+<span class="font-label-caps text-[10px] uppercase">Export Marks</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Recent Activity Timeline -->
+<section class="space-y-8 fade-in-up stagger-9">
+<h4 class="font-label-caps text-label-caps text-primary flex items-center gap-2 uppercase tracking-widest border-b border-border-subtle pb-4">
+<span class="material-symbols-outlined text-[18px]">history</span> Recent Submissions & Activity
+                </h4>
+<div class="space-y-6 pl-2">
+<!-- Activity Item 1 -->
+<div class="relative pl-8 border-l border-border-subtle">
+<div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-success-emerald ring-4 ring-background"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+<h5 class="font-body-md font-semibold text-primary">Alex submitted Kinematics Analysis</h5>
+<span class="font-mono-metrics text-mono-metrics text-secondary">Yesterday, 14:30</span>
+</div>
+<p class="font-body-md text-secondary max-w-3xl">Automated grading indicates 95% completion. Ready for manual review of conclusion section.</p>
+</div>
+<!-- Activity Item 2 -->
+<div class="relative pl-8 border-l border-border-subtle pb-4">
+<div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-neural-blue ring-4 ring-background"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+<h5 class="font-body-md font-semibold text-primary">Circuit Analysis Lab Session Concluded</h5>
+<span class="font-mono-metrics text-mono-metrics text-secondary">Oct 8, 11:15</span>
+</div>
+<div class="glass-panel p-5 rounded-2xl mt-4 border-l-4 border-neural-blue max-w-2xl">
+<p class="text-on-surface-variant font-body-md italic">28/30 students completed the in-lab activities. Reports are due next Friday.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

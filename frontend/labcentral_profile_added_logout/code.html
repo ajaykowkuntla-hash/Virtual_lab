@@ -1,0 +1,498 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LabCentral - Student Profile</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "card-bg": "#FCFCFB",
+                "surface-dim": "#dadada",
+                "on-tertiary-fixed": "#1b1b1b",
+                "on-secondary": "#ffffff",
+                "inverse-on-surface": "#f1f1f1",
+                "secondary-fixed": "#e4e2e2",
+                "background": "#f9f9f9",
+                "tertiary-fixed-dim": "#c6c6c6",
+                "primary-fixed": "#e2e2e2",
+                "inverse-primary": "#c6c6c6",
+                "surface-container-low": "#f3f3f3",
+                "surface-container-highest": "#e2e2e2",
+                "error": "#ba1a1a",
+                "outline-variant": "#cfc4c5",
+                "outline": "#7e7576",
+                "on-tertiary-container": "#848484",
+                "on-background": "#1b1b1b",
+                "on-secondary-fixed": "#1b1c1c",
+                "on-surface-variant": "#4c4546",
+                "on-secondary-container": "#626262",
+                "secondary": "#5e5e5e",
+                "canvas-bg": "#F7F7F5",
+                "inverse-surface": "#303030",
+                "surface-bright": "#f9f9f9",
+                "primary": "#000000",
+                "neural-pink": "#F43F5E",
+                "surface-container": "#eeeeee",
+                "neural-blue": "#3B82F6",
+                "on-primary-fixed-variant": "#474747",
+                "on-error": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "tertiary-container": "#1b1b1b",
+                "border-subtle": "#E7E7E4",
+                "primary-fixed-dim": "#c6c6c6",
+                "surface": "#f9f9f9",
+                "surface-container-high": "#e8e8e8",
+                "on-tertiary": "#ffffff",
+                "surface-tint": "#5e5e5e",
+                "success-emerald": "#10B981",
+                "panel-bg": "#F3F2EF",
+                "error-container": "#ffdad6",
+                "on-primary-fixed": "#1b1b1b",
+                "on-error-container": "#93000a",
+                "on-primary-container": "#848484",
+                "on-secondary-fixed-variant": "#464747",
+                "secondary-fixed-dim": "#c7c6c6",
+                "on-primary": "#ffffff",
+                "tertiary": "#000000",
+                "on-tertiary-fixed-variant": "#474747",
+                "on-surface": "#1b1b1b",
+                "tertiary-fixed": "#e2e2e2",
+                "surface-variant": "#e2e2e2",
+                "neural-purple": "#8B5CF6",
+                "secondary-container": "#e1dfdf",
+                "primary-container": "#1b1b1b"
+        },
+        "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "section_gap_mobile": "80px",
+                "section_gap_desktop": "180px",
+                "unit_base": "8px",
+                "edge_margin": "32px",
+                "gutter": "32px",
+                "container_max": "1280px"
+        },
+        "fontFamily": {
+                "h2": [
+                        "Geist"
+                ],
+                "h3": [
+                        "Geist"
+                ],
+                "h1-mobile": [
+                        "Geist"
+                ],
+                "body-md": [
+                        "Geist"
+                ],
+                "mono-metrics": [
+                        "Geist"
+                ],
+                "h1": [
+                        "Geist"
+                ],
+                "label-caps": [
+                        "Geist"
+                ],
+                "h2-mobile": [
+                        "Geist"
+                ],
+                "body-lg": [
+                        "Geist"
+                ]
+        },
+        "fontSize": {
+                "h2": [
+                        "64px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.03em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "h3": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "h1-mobile": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "mono-metrics": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0",
+                                "fontWeight": "700"
+                        }
+                ],
+                "h1": [
+                        "84px",
+                        {
+                                "lineHeight": "1.05",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.1em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "h2-mobile": [
+                        "32px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Geist', sans-serif;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Subtle glass effect for cards */
+        .glass-card {
+            background: rgba(252, 252, 251, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid theme('colors.border-subtle');
+        }
+        
+        .orb-blur {
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        
+        /* Interactive button hover state */
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            background-color: theme('colors.surface-container-high');
+        }
+    </style>
+<link data-snapdom="injected-import" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;display=swap" rel="stylesheet"></head>
+<body class="bg-canvas-bg text-on-surface min-h-screen flex relative overflow-x-hidden">
+<!-- Background Orbs -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-neural-blue orb-blur mix-blend-multiply"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-neural-purple orb-blur mix-blend-multiply"></div>
+</div>
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-72 py-8 z-40 bg-panel-bg border-r border-border-subtle">
+<div class="px-8 mb-12 flex flex-col gap-2">
+<h2 class="font-h2-mobile text-h2-mobile font-bold text-primary">DigiLab</h2>
+<span class="font-label-caps text-label-caps text-secondary uppercase">Engineering Virtual Lab</span>
+</div>
+<div class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps uppercase">Virtual Lab</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps uppercase">Assignments</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Timetable</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-caps text-label-caps uppercase">Updates</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="font-label-caps text-label-caps uppercase">Helpdesk</span>
+</a>
+<a class="flex items-center gap-3 bg-primary text-white shadow-sm rounded-lg px-4 py-3 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-label-caps text-label-caps uppercase">Profile</span>
+</a>
+</div>
+<div class="px-4 space-y-2">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 md:left-72 w-full md:w-[calc(100%-288px)] z-50 flex justify-between items-center px-edge_margin h-[72px] bg-white/25 backdrop-blur-3xl border-b border-border-subtle">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="md:hidden font-h3 text-h3 font-semibold text-primary">LabCentral</h2>
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-full max-w-xs border border-border-subtle">
+<span class="material-symbols-outlined text-secondary">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full ml-2" placeholder="Search labs, assignments..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-2 md:gap-4">
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-neural-pink rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-border-subtle mx-2 hidden md:block"></div>
+<button class="flex items-center gap-2 hover:bg-surface-container-low p-1 pr-3 rounded-full transition-colors">
+<div class="w-8 h-8 rounded-full bg-neural-purple flex items-center justify-center text-white font-bold text-sm">A</div>
+<span class="hidden md:block font-label-caps text-label-caps">Alex Mercer</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 relative z-10 w-full px-6 md:px-edge_margin pt-24 md:pt-16 pb-section_gap_mobile max-w-container_max mx-auto md:ml-72 flex flex-col">
+<!-- Page Header -->
+<div class="py-12 flex justify-between items-end border-b border-border-subtle mb-12">
+<div>
+<h2 class="font-h2-mobile text-h2-mobile md:font-h2 md:text-h2 text-primary tracking-tight">Student Profile</h2>
+<p class="font-body-lg text-body-lg text-secondary mt-2">Manage your academic identity and track progress.</p>
+</div>
+<div class="hidden md:flex gap-4">
+<button class="btn-secondary px-6 py-2 rounded-full border border-outline text-primary font-body-md text-body-md transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit Profile
+                    </button>
+<button class="btn-primary px-6 py-2 rounded-full bg-primary text-on-primary font-body-md text-body-md transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Transcript
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Profile Identity Card (Spans 8 cols) -->
+<section class="md:col-span-8 glass-card rounded-[2rem] p-8 md:p-10 relative overflow-hidden flex flex-col md:flex-row gap-8 items-start">
+<!-- Subtle background texture -->
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-surface-container-highest via-transparent to-transparent opacity-50 z-0 pointer-events-none"></div>
+<div class="z-10 flex-shrink-0">
+<div class="w-32 h-32 md:w-48 md:h-48 rounded-[2rem] overflow-hidden border-2 border-white shadow-sm relative">
+<img class="w-full h-full object-cover" data-alt="A highly detailed, professional portrait of a young engineering student in a bright, modern light-mode studio environment. The lighting is soft and flattering. The student is wearing casual professional attire. The aesthetic is clean, minimalist, and high-quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0Ea8pEpYMIkhyX7iOSOcAPFwbB3_MEdnm_5zKrjE6ScRzvYCF91D03LQz1sdddnRm-8B9ZXk7HvTROxx61UzayRRyDwZgkD9FZNoouTgvyM4N5ApRoj009XO4N5xbGtLa9mNC36oGTEHEjeWEpcptZbXFjQgMTx4OOcYk5x9NLfyE2mTkvAX_SUlEAyWoJLcoTFXqbgWuWfZHvQyYN-9vBsXAJnR90KWvIGzv8YlwOCHgCLZ9ghfOaxsMizjsLE3TzsduNFOdd0wc">
+<div class="absolute bottom-2 right-2 w-4 h-4 bg-success-emerald rounded-full border-2 border-white animate-pulse" title="Online Status"></div>
+</div>
+</div>
+<div class="z-10 flex-1 w-full">
+<div class="flex justify-between items-start w-full">
+<div>
+<h3 class="font-h3 text-h3 text-primary mb-1">Alex Mercer</h3>
+<p class="font-mono-metrics text-mono-metrics text-secondary uppercase tracking-widest mb-6">Electrical Engineering • Year 3</p>
+</div>
+<div class="px-3 py-1 bg-surface-container-high rounded-full border border-border-subtle flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px] text-success-emerald">verified</span>
+<span class="font-label-caps text-label-caps text-primary">Verified</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 mt-4 border-t border-border-subtle/50 pt-6">
+<div>
+<span class="block font-label-caps text-label-caps text-secondary mb-1">Roll Number</span>
+<span class="font-body-md text-body-md text-primary font-medium">EE-2021-042</span>
+</div>
+<div>
+<span class="block font-label-caps text-label-caps text-secondary mb-1">Student ID</span>
+<span class="font-mono-metrics text-mono-metrics text-primary font-medium">9842-110-33X</span>
+</div>
+<div>
+<span class="block font-label-caps text-label-caps text-secondary mb-1">Email Address</span>
+<span class="font-body-md text-body-md text-primary font-medium">a.mercer@labcentral.edu</span>
+</div>
+<div>
+<span class="block font-label-caps text-label-caps text-secondary mb-1">Current Semester</span>
+<span class="font-body-md text-body-md text-primary font-medium">Fall 2024 (Semester 5)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Academic Summary (Spans 4 cols) -->
+<section class="md:col-span-4 flex flex-col gap-6">
+<!-- Metric Tile 1 -->
+<div class="glass-card rounded-[1.5rem] p-6 flex flex-col justify-between h-full min-h-[140px] relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+<div class="absolute right-[-20px] top-[-20px] opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">grading</span>
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-secondary">Average Grade</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-h2-mobile text-h2-mobile text-primary">3.8</span>
+<span class="font-body-md text-body-md text-secondary">/ 4.0</span>
+</div>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[95%]"></div>
+</div>
+</div>
+<!-- Metric Tile 2 -->
+<div class="glass-card rounded-[1.5rem] p-6 flex flex-col justify-between h-full min-h-[140px] relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+<div class="absolute right-[-20px] top-[-20px] opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">science</span>
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-secondary">Completed Experiments</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-h2-mobile text-h2-mobile text-primary">24</span>
+<span class="font-body-md text-body-md text-secondary">/ 30</span>
+</div>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-neural-blue w-[80%]"></div>
+</div>
+</div>
+</section>
+<!-- Achievements & Badges (Spans 7 cols) -->
+<section class="md:col-span-7 mt-8">
+<h3 class="font-h3 text-h3 text-primary mb-6">Achievements</h3>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+<!-- Badge 1 -->
+<div class="bg-card-bg rounded-xl border border-border-subtle p-5 flex flex-col items-center text-center hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary">emoji_events</span>
+</div>
+<span class="font-mono-metrics text-mono-metrics text-primary mb-1">Top 5%</span>
+<span class="font-label-caps text-label-caps text-secondary text-[10px]">Circuit Theory</span>
+</div>
+<!-- Badge 2 -->
+<div class="bg-card-bg rounded-xl border border-border-subtle p-5 flex flex-col items-center text-center hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-neural-blue">workspace_premium</span>
+</div>
+<span class="font-mono-metrics text-mono-metrics text-primary mb-1">Lab Master</span>
+<span class="font-label-caps text-label-caps text-secondary text-[10px]">Sem 4 Cert.</span>
+</div>
+<!-- Badge 3 -->
+<div class="bg-card-bg rounded-xl border border-border-subtle p-5 flex flex-col items-center text-center hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-success-emerald">check_circle</span>
+</div>
+<span class="font-mono-metrics text-mono-metrics text-primary mb-1">Perfect Attd.</span>
+<span class="font-label-caps text-label-caps text-secondary text-[10px]">Fall 2023</span>
+</div>
+</div>
+</section><div class="md:col-span-7 mt-8 flex justify-start h-auto"><button class="px-6 py-2 rounded-full border border-error text-error font-body-md text-body-md transition-colors flex items-center gap-2 hover:bg-error-container h-fit">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+    Logout
+</button></div>
+<!-- Recent Activity Timeline (Spans 5 cols) -->
+<section class="md:col-span-5 mt-8 glass-card rounded-[2rem] p-8">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-h3 text-h3 text-primary">Activity</h3>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+<div class="relative border-l border-border-subtle ml-3 space-y-8">
+<!-- Timeline Item 1 -->
+<div class="relative pl-6">
+<div class="absolute left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-card-bg"></div>
+<p class="font-mono-metrics text-mono-metrics text-secondary mb-1">Today, 14:30</p>
+<p class="font-body-md text-body-md text-primary">Submitted Experiment 4: Operational Amplifiers</p>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative pl-6">
+<div class="absolute left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-surface-container-highest ring-4 ring-card-bg border border-outline-variant"></div>
+<p class="font-mono-metrics text-mono-metrics text-secondary mb-1">Yesterday, 09:15</p>
+<p class="font-body-md text-body-md text-primary">Completed Virtual Lab Module: Signal Processing</p>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative pl-6">
+<div class="absolute left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-surface-container-highest ring-4 ring-card-bg border border-outline-variant"></div>
+<p class="font-mono-metrics text-mono-metrics text-secondary mb-1">Oct 12, 2024</p>
+<p class="font-body-md text-body-md text-primary text-secondary">Downloaded Mid-Term Transcript</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Mobile Action Buttons (Visible only on small screens) -->
+<div class="md:hidden mt-12 flex flex-col gap-4">
+<button class="btn-primary w-full py-3 rounded-full bg-primary text-on-primary font-body-md text-body-md flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    Download Transcript
+                </button>
+<button class="btn-secondary w-full py-3 rounded-full border border-outline text-primary font-body-md text-body-md flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                    Edit Profile
+                </button>
+</div>
+<!-- Footer -->
+<footer class="mt-auto border-t border-border-subtle/50 bg-transparent py-6 w-full pt-12">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-mono-metrics text-mono-metrics uppercase tracking-widest text-secondary opacity-70">
+                    © 2024 LabCentral v2.4.0-Neural
+                </p>
+<ul class="flex flex-wrap justify-center gap-6">
+<li class="">
+<a class="font-mono-metrics text-mono-metrics uppercase tracking-widest text-secondary hover:text-primary transition-colors opacity-70 hover:opacity-100" href="#">Privacy Policy</a>
+</li>
+<li class="">
+<a class="font-mono-metrics text-mono-metrics uppercase tracking-widest text-secondary hover:text-primary transition-colors opacity-70 hover:opacity-100" href="#">Terms of Service</a>
+</li>
+<li class="">
+<a class="font-mono-metrics text-mono-metrics uppercase tracking-widest text-secondary hover:text-primary transition-colors opacity-70 hover:opacity-100" href="#">System Status</a>
+</li>
+</ul>
+</div>
+</footer>
+</main>
+
+
+
+
+</body></html>

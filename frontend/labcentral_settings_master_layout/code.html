@@ -1,0 +1,309 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LabCentral - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        /* Geist Font Emulation (if actual Geist is unavailable) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @font-face {
+            font-family: 'Geist';
+            src: local('Inter'); /* Fallback for demonstration */
+        }
+        
+        .material-symbols-outlined {
+          font-family: 'Material Symbols Outlined';
+          font-weight: normal;
+          font-style: normal;
+          font-size: 24px;  /* Preferred icon size */
+          line-height: 1;
+          letter-spacing: normal;
+          text-transform: none;
+          display: inline-block;
+          white-space: nowrap;
+          word-wrap: normal;
+          direction: ltr;
+          -webkit-font-feature-settings: 'liga';
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .orb-blur {
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#000000",
+                    "secondary-fixed": "#e4e2e2",
+                    "surface-variant": "#e2e2e2",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-secondary-container": "#626262",
+                    "secondary-fixed-dim": "#c7c6c6",
+                    "inverse-primary": "#c6c6c6",
+                    "tertiary": "#000000",
+                    "surface-tint": "#5e5e5e",
+                    "primary-fixed": "#e2e2e2",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "on-error": "#ffffff",
+                    "border-subtle": "#E7E7E4",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1b1b1b",
+                    "primary-container": "#1b1b1b",
+                    "neural-blue": "#3B82F6",
+                    "card-bg": "#FCFCFB",
+                    "secondary-container": "#e1dfdf",
+                    "surface-container": "#eeeeee",
+                    "error": "#ba1a1a",
+                    "secondary": "#5e5e5e",
+                    "inverse-surface": "#303030",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-surface-variant": "#4c4546",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#848484",
+                    "tertiary-fixed": "#e2e2e2",
+                    "outline": "#7e7576",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9f9",
+                    "surface-dim": "#dadada",
+                    "neural-purple": "#8B5CF6",
+                    "on-tertiary-container": "#848484",
+                    "canvas-bg": "#F7F7F5",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "panel-bg": "#F3F2EF",
+                    "surface-container-low": "#f3f3f3",
+                    "outline-variant": "#cfc4c5",
+                    "success-emerald": "#10B981",
+                    "on-surface": "#1b1b1b",
+                    "surface-container-high": "#e8e8e8",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#464747",
+                    "neural-pink": "#F43F5E",
+                    "background": "#f9f9f9",
+                    "surface": "#f9f9f9",
+                    "on-primary-fixed-variant": "#474747",
+                    "tertiary-container": "#1b1b1b",
+                    "on-primary-fixed": "#1b1b1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit_base": "8px",
+                    "section_gap_desktop": "180px",
+                    "section_gap_mobile": "80px",
+                    "edge_margin": "32px",
+                    "gutter": "32px",
+                    "container_max": "1280px"
+            },
+            "fontFamily": {
+                    "h1": ["Geist"],
+                    "h3": ["Geist"],
+                    "h2-mobile": ["Geist"],
+                    "h2": ["Geist"],
+                    "label-caps": ["Geist"],
+                    "h1-mobile": ["Geist"],
+                    "body-md": ["Geist"],
+                    "body-lg": ["Geist"],
+                    "mono-metrics": ["Geist"]
+            },
+            "fontSize": {
+                    "h1": ["84px", {"lineHeight": "1.05", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                    "h3": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "h2-mobile": ["32px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "h2": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "h1-mobile": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "mono-metrics": ["12px", {"lineHeight": "1", "letterSpacing": "0", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-canvas-bg text-on-surface min-h-screen flex relative overflow-x-hidden">
+<!-- Background Orbs -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-neural-blue orb-blur mix-blend-multiply"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-neural-purple orb-blur mix-blend-multiply"></div>
+</div>
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-72 py-8 z-40 bg-panel-bg border-r border-border-subtle">
+<div class="px-8 mb-12 flex flex-col gap-2">
+<h2 class="font-h2-mobile text-h2-mobile font-bold text-primary">DigiLab</h2>
+<span class="font-label-caps text-label-caps text-secondary uppercase">Engineering Virtual Lab</span>
+</div>
+<div class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-caps text-label-caps uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps uppercase">Virtual Lab</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps uppercase">Assignments</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Timetable</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-caps text-label-caps uppercase">Updates</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="font-label-caps text-label-caps uppercase">Helpdesk</span>
+</a>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps uppercase">Profile</span>
+</a>
+</div>
+<div class="px-4 space-y-2">
+<a class="flex items-center gap-3 bg-primary text-white shadow-sm rounded-lg px-4 py-3 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</a>
+
+</div>
+</nav>
+<!-- TopNavBar (Mobile Only) -->
+<header class="fixed top-0 left-0 md:left-72 w-full md:w-[calc(100%-288px)] z-50 flex justify-between items-center px-edge_margin h-[72px] bg-white/25 backdrop-blur-3xl border-b border-border-subtle">
+<div class="flex items-center gap-4 flex-1">
+<h2 class="md:hidden font-h3 text-h3 font-semibold text-primary">LabCentral</h2>
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-full border border-border-subtle max-w-xs">
+<span class="material-symbols-outlined text-secondary">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full ml-2" placeholder="Search labs, assignments..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-2 md:gap-4">
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-neural-pink rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-border-subtle mx-2 hidden md:block"></div>
+<button class="flex items-center gap-2 hover:bg-surface-container-low p-1 pr-3 rounded-full transition-colors">
+<div class="w-8 h-8 rounded-full bg-neural-purple flex items-center justify-center text-white font-bold text-sm">A</div>
+<span class="hidden md:block font-label-caps text-label-caps">Alex</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 relative z-10 w-full px-6 md:px-edge_margin pt-24 md:pt-[calc(72px+32px)] pb-section_gap_mobile max-w-container_max mx-auto md:ml-72 flex flex-col min-h-screen">
+<div class="flex-1">
+<div class="mb-12">
+<h1 class="font-h2 text-h2-mobile md:text-h2 text-primary">Settings</h1>
+<p class="font-body-lg text-body-lg text-secondary mt-2">Manage your workstation preferences and environment.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+<!-- Settings Navigation (Bento Sidebar) -->
+<div class="lg:col-span-3 space-y-2">
+<button class="w-full text-left px-4 py-3 rounded-xl bg-surface-container text-primary font-bold transition-colors flex items-center justify-between">
+                            Appearance
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<button class="w-full text-left px-4 py-3 rounded-xl hover:bg-surface-container-low text-secondary transition-colors flex items-center justify-between">
+                            Editor Preferences
+                        </button>
+<button class="w-full text-left px-4 py-3 rounded-xl hover:bg-surface-container-low text-secondary transition-colors flex items-center justify-between">
+                            Notifications
+                        </button>
+<button class="w-full text-left px-4 py-3 rounded-xl hover:bg-surface-container-low text-secondary transition-colors flex items-center justify-between">
+                            Privacy &amp; Security
+                        </button>
+</div>
+<!-- Settings Content Canvas -->
+<div class="lg:col-span-9 space-y-12">
+<!-- Appearance Section -->
+<section class="space-y-8" id="appearance">
+<div>
+<h3 class="font-h3 text-h3 text-primary mb-6">Appearance</h3>
+<div class="bg-card-bg border border-border-subtle rounded-3xl p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Theme Selection -->
+<div class="space-y-4">
+<label class="font-label-caps text-label-caps text-secondary uppercase tracking-widest block">Theme Mode</label>
+<div class="flex gap-4">
+<button class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-primary bg-surface-container-lowest text-primary">
+<span class="material-symbols-outlined mb-2" style="font-size: 32px;">light_mode</span>
+<span class="font-body-md text-body-md font-medium">Light</span>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-border-subtle hover:border-primary/50 bg-surface-container-lowest text-secondary transition-colors">
+<span class="material-symbols-outlined mb-2" style="font-size: 32px;">dark_mode</span>
+<span class="font-body-md text-body-md font-medium">Dark</span>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-border-subtle hover:border-primary/50 bg-surface-container-lowest text-secondary transition-colors">
+<span class="material-symbols-outlined mb-2" style="font-size: 32px;">desktop_windows</span>
+<span class="font-body-md text-body-md font-medium">System</span>
+</button>
+</div>
+</div>
+<!-- Accent Color -->
+<div class="space-y-4">
+<label class="font-label-caps text-label-caps text-secondary uppercase tracking-widest block">Accent Color</label>
+<div class="flex flex-wrap gap-3">
+<button class="w-10 h-10 rounded-full bg-primary ring-2 ring-offset-2 ring-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[16px]">check</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-neural-blue hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-neural-purple hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-neural-pink hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-success-emerald hover:scale-110 transition-transform"></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- Footer Content injected into Canvas -->
+<footer class="mt-auto pt-24 border-t border-border-subtle/50 py-6">
+<div class="flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity">
+<p class="font-mono-metrics text-mono-metrics text-secondary uppercase tracking-widest">© 2024 LabCentral v2.4.0-Neural</p>
+<div class="flex gap-6">
+<a class="font-mono-metrics text-mono-metrics text-secondary hover:text-primary transition-colors uppercase tracking-widest" href="#">Privacy Policy</a>
+<a class="font-mono-metrics text-mono-metrics text-secondary hover:text-primary transition-colors uppercase tracking-widest" href="#">Terms of Service</a>
+<a class="font-mono-metrics text-mono-metrics text-secondary hover:text-primary transition-colors uppercase tracking-widest" href="#">System Status</a>
+</div>
+</div>
+</footer>
+</main>
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LabCentral Login</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f9f9f9",
+                    "secondary": "#5e5e5e",
+                    "panel-bg": "#F3F2EF",
+                    "inverse-primary": "#c6c6c6",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#4c4546",
+                    "on-surface": "#1b1b1b",
+                    "outline": "#7e7576",
+                    "secondary-container": "#e1dfdf",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-tint": "#5e5e5e",
+                    "surface-container": "#eeeeee",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "secondary-fixed-dim": "#c7c6c6",
+                    "primary-fixed": "#e2e2e2",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "card-bg": "#FCFCFB",
+                    "secondary-fixed": "#e4e2e2",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#464747",
+                    "on-primary-fixed-variant": "#474747",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "on-primary-fixed": "#1b1b1b",
+                    "on-secondary-container": "#626262",
+                    "neural-pink": "#F43F5E",
+                    "tertiary-container": "#1b1b1b",
+                    "on-tertiary-container": "#848484",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-container-lowest": "#ffffff",
+                    "neural-purple": "#8B5CF6",
+                    "on-primary-container": "#848484",
+                    "primary": "#000000",
+                    "canvas-bg": "#F7F7F5",
+                    "neural-blue": "#3B82F6",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f9f9f9",
+                    "on-background": "#1b1b1b",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#000000",
+                    "success-emerald": "#10B981",
+                    "primary-container": "#1b1b1b",
+                    "border-subtle": "#E7E7E4",
+                    "surface-bright": "#f9f9f9",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "outline-variant": "#cfc4c5",
+                    "surface-variant": "#e2e2e2",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-dim": "#dadada",
+                    "surface-container-low": "#f3f3f3",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#303030"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "edge_margin": "32px",
+                    "unit_base": "8px",
+                    "section_gap_mobile": "80px",
+                    "section_gap_desktop": "180px",
+                    "gutter": "32px",
+                    "container_max": "1280px"
+            },
+            "fontFamily": {
+                    "mono-metrics": [
+                            "Geist"
+                    ],
+                    "h1": [
+                            "Geist"
+                    ],
+                    "label-caps": [
+                            "Geist"
+                    ],
+                    "body-lg": [
+                            "Geist"
+                    ],
+                    "h1-mobile": [
+                            "Geist"
+                    ],
+                    "body-md": [
+                            "Geist"
+                    ],
+                    "h2-mobile": [
+                            "Geist"
+                    ],
+                    "h2": [
+                            "Geist"
+                    ],
+                    "h3": [
+                            "Geist"
+                    ]
+            },
+            "fontSize": {
+                    "mono-metrics": [
+                            "12px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "h1": [
+                            "84px",
+                            {
+                                    "lineHeight": "1.05",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "h1-mobile": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "letterSpacing": "0",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "h2-mobile": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "h2": [
+                            "64px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.03em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "h3": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #FFFFFF; /* Override for this specific pure white request */
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(231, 231, 228, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: #000000;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex text-on-surface antialiased selection:bg-surface-container-high">
+<!-- Split Layout Container -->
+<div class="flex w-full min-h-screen">
+<!-- Left Section: Illustration -->
+<div class="hidden lg:flex w-1/2 relative bg-surface-lowest items-center justify-center p-edge_margin">
+<!-- Subtle gradient orb behind illustration for depth -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-neural-blue/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="relative w-full max-w-2xl aspect-[1.79] rounded-2xl overflow-hidden border-[0.5px] border-border-subtle shadow-sm bg-white">
+<img alt="LabCentral Engineering Illustration" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtaVMmdQi_d_3quBxZuGthpBwG_Vt5BlA-D4SNSyf5U09hlKlu04bNESGO1en3R2nmMQTSmtZJosPs9hqYYeS8KzkZ46AMSF6t0b6asfZOV93EYuzJWMBi06hkZ9zxORSiOo6ZrZBSM1yqaK3llCS_d7uHWcLt-T6UhYegK4Z11iscXysd_IDZL6F1g60OBrAov0nwLr_GEd84AlyUHKVVVMJDfjb5kBWXUhuIhQLoiJ1Mj81OxILhAycNBCSJqrjLfGctJ5DG8QlL">
+</div>
+<!-- Branding watermark overlay -->
+<div class="absolute bottom-edge_margin left-edge_margin">
+<p class="font-mono-metrics text-mono-metrics text-secondary opacity-50 tracking-widest uppercase">LABCENTRAL // SYS.ON</p>
+</div>
+</div>
+<!-- Right Section: Login Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-edge_margin lg:p-24 relative overflow-hidden bg-white">
+<!-- Mobile subtle orb (hidden on desktop) -->
+<div class="lg:hidden absolute top-0 right-0 w-64 h-64 bg-neural-purple/5 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/4"></div>
+<!-- Login Card (Glassmorphism) -->
+<div class="glass-card w-full max-w-md rounded-2xl p-8 lg:p-12 relative z-10">
+<!-- Header -->
+<div class="mb-10 text-center lg:text-left">
+<div class="flex items-center justify-center lg:justify-start gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">science</span>
+<span class="font-h3 text-h3 font-semibold tracking-tight text-primary">DigiLab</span>
+</div>
+<h1 class="font-h2-mobile text-h2-mobile font-semibold text-primary mb-2">Welcome back.</h1>
+<p class="font-body-md text-body-md text-secondary">Authenticate to access the virtual engineering lab.</p>
+</div>
+<!-- Form -->
+<form class="space-y-6">
+<!-- Student ID -->
+<div class="space-y-2">
+<label class="block font-label-caps text-label-caps text-primary tracking-wider uppercase" for="studentId">Student ID</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-secondary text-sm">badge</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border-[0.5px] border-border-subtle rounded-xl bg-surface-container-lowest text-primary font-mono-metrics text-sm placeholder:text-outline transition-colors focus:border-primary focus:ring-0" id="studentId" name="studentId" placeholder="ENG-000000" required="" type="text">
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="block font-label-caps text-label-caps text-primary tracking-wider uppercase" for="password">Password</label>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-secondary text-sm">lock</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border-[0.5px] border-border-subtle rounded-xl bg-surface-container-lowest text-primary font-mono-metrics text-sm placeholder:text-outline transition-colors focus:border-primary focus:ring-0" id="password" name="password" placeholder="••••••••" required="" type="password">
+</div>
+<div class="flex justify-end pt-1">
+<a class="font-mono-metrics text-mono-metrics text-secondary hover:text-primary transition-colors underline decoration-border-subtle underline-offset-4 hover:decoration-primary" href="#">Forgot Password?</a>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-4 px-6 rounded-full font-label-caps text-label-caps tracking-widest uppercase hover:opacity-90 transition-opacity focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-lg shadow-primary/20" type="button">
+                            Sign In
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Minimal Footer -->
+<div class="mt-10 pt-6 border-t-[0.5px] border-border-subtle text-center">
+<p class="font-mono-metrics text-mono-metrics text-secondary flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[10px]">lock</span>
+                        Secure authentication via Institution SSO
+                    </p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</body></html>
