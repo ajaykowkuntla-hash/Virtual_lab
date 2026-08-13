@@ -10,6 +10,13 @@ export const FacultyDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState<any[]>([]);
+  const [analytics, setAnalytics] = useState<any>({
+    assigned_labs: 0,
+    assigned_students: 0,
+    pending_submissions: 0,
+    upcoming_events: 0,
+    recent_activity_count: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isExperimentModalOpen, setIsExperimentModalOpen] = useState(false);
 
@@ -17,80 +24,86 @@ export const FacultyDashboard: React.FC = () => {
     try {
       await apiClient.post(`/lab/submissions/${submissionId}/verify`, { status });
       setSubmissions(submissions.map(s => s.id === submissionId ? { ...s, status } : s));
+      fetchAnalytics();
     } catch (error) {
       console.error("Failed to verify submission", error);
     }
   };
 
+  const fetchAnalytics = async () => {
+    try {
+      const res = await apiClient.get('/faculty/analytics');
+      setAnalytics(res.data);
+    } catch (error) {
+      console.error("Failed to fetch faculty analytics", error);
+    }
+  };
+
+  const fetchSubmissions = async () => {
+    try {
+      setIsLoading(true);
+      const response = await apiClient.get('/lab/submissions/exp_1_dsp');
+      setSubmissions(response.data);
+    } catch (error) {
+      console.error("Failed to fetch submissions", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSubmissions = async () => {
-      try {
-        const response = await apiClient.get('/lab/submissions/exp_1_dsp');
-        setSubmissions(response.data);
-      } catch (error) {
-        console.error("Failed to fetch submissions", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchSubmissions();
+    fetchAnalytics();
   }, []);
 
   return (
     <Layout role="faculty">
-      {/* Header section */}
       <header className="fade-in-up stagger-1">
         <h1 className="text-[56px] font-semibold text-primary tracking-tight leading-none mb-4">
-          Welcome back, {user?.username || user?.id || 'Dr. Vance'}.
+          Welcome back, {user?.name || user?.username || 'Dr. Vance'}.
         </h1>
         <div className="flex items-center gap-4">
-          <p className="font-body-lg text-secondary">Fall Semester 2024 • Engineering Thermodynamics</p>
-          <span className="h-4 w-[1px] bg-border-subtle"></span>
-          <button className="text-neural-blue font-label-caps text-label-caps flex items-center gap-1 hover:underline">
-            Faculty Controls <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          </button>
+          <p className="font-body-lg text-secondary">Fall Semester 2026 • ECE Department</p>
         </div>
       </header>
 
-      {/* Summary Statistic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           icon="science"
           iconColor="text-neural-blue"
-          value="12"
-          label="Total Labs Created"
-          badge={<span className="font-mono-metrics text-mono-metrics text-secondary">2 Active</span>}
+          value={analytics.assigned_labs.toString()}
+          label="Assigned Labs"
+          badge={<span className="font-mono-metrics text-mono-metrics text-secondary">Active</span>}
           staggerIndex={2}
-        />
-        <StatCard
-          icon="fact_check"
-          iconColor="text-neural-pink"
-          value={submissions.filter(s => s.status === 'unverified' || !s.status).length.toString()}
-          label="Pending Submissions"
-          badge={
-            <span className="flex items-center gap-1 text-[10px] font-mono-metrics bg-surface-container px-2 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-neural-pink animate-pulse"></span> NEEDS REVIEW
-            </span>
-          }
-          staggerIndex={3}
         />
         <StatCard
           icon="groups"
           iconColor="text-success-emerald"
-          value="89%"
-          label="Class Attendance"
+          value={analytics.assigned_students.toString()}
+          label="Assigned Students"
+          staggerIndex={3}
+        />
+        <StatCard
+          icon="fact_check"
+          iconColor="text-neural-pink"
+          value={analytics.pending_submissions.toString()}
+          label="Pending Submissions"
+          badge={
+            <span className="flex items-center gap-1 text-[10px] font-mono-metrics bg-surface-container px-2 py-1 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-neural-pink animate-pulse"></span> REVIEW REQUIRED
+            </span>
+          }
           staggerIndex={4}
         />
         <StatCard
-          icon="bar_chart"
+          icon="calendar_month"
           iconColor="text-neural-purple"
-          value="B+"
-          label="Class Average"
+          value={analytics.upcoming_events.toString()}
+          label="Upcoming Events"
           staggerIndex={5}
         />
       </div>
 
-      {/* Asymmetrical Grid: Main Focus Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <div className="relative group fade-in-up stagger-6">
@@ -101,25 +114,22 @@ export const FacultyDashboard: React.FC = () => {
                   <span className="px-2 py-1 bg-neural-blue/10 rounded-full font-mono-metrics text-mono-metrics text-neural-blue">LIVE SESSION</span>
                   <span className="px-2 py-1 bg-surface-container-high rounded-full font-mono-metrics text-mono-metrics text-secondary">exp_1_dsp</span>
                 </div>
-                <h3 className="text-h3 font-semibold text-primary">Thermodynamic Cycles: Rankine</h3>
-                <p className="font-body-md text-secondary max-w-md">24 out of 30 students are currently connected. 18 are in the data collection phase.</p>
+                <h3 className="text-h3 font-semibold text-primary">DSP Lab 1: Sine Wave</h3>
+                <p className="font-body-md text-secondary max-w-md">Experiment is actively available for online compilation, grading, and automated verification.</p>
               </div>
-              <button className="shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all shadow-xl shadow-black/10">
+              <button 
+                onClick={() => navigate('/lab/exp_1_dsp')}
+                className="shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all shadow-xl shadow-black/10"
+              >
                 <span className="material-symbols-outlined text-[18px]">visibility</span>
                 <span className="font-label-caps text-label-caps font-bold">Monitor Session</span>
               </button>
             </div>
           </div>
 
-          {/* Performance Visualizer */}
           <div className="glass-panel rounded-3xl p-8 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-7">
             <div className="flex items-center justify-between">
               <h4 className="font-label-caps text-label-caps text-primary">Class Performance Trend</h4>
-              <div className="flex gap-2">
-                <button className="p-1.5 rounded-full bg-surface-container hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined text-[16px]">show_chart</span>
-                </button>
-              </div>
             </div>
             <div className="h-56 bg-white/40 rounded-2xl border border-white/60 relative overflow-hidden flex items-end justify-between px-8 pb-4">
               <div className="w-8 bg-surface-container-high rounded-full h-[40%]"></div>
@@ -136,7 +146,6 @@ export const FacultyDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Sidebar: Schedule & Activity */}
         <div className="space-y-8">
           <div className="glass-panel rounded-3xl p-6 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-8">
             <div className="flex items-center justify-between border-b border-border-subtle pb-3">
@@ -148,17 +157,16 @@ export const FacultyDashboard: React.FC = () => {
               <div className="flex items-center gap-4 p-4 rounded-2xl border border-border-subtle hover:bg-white/40 transition-colors">
                 <div className="w-12 h-12 flex flex-col items-center justify-center bg-surface-container-low rounded-xl">
                   <span className="text-[10px] font-bold text-secondary uppercase">Oct</span>
-                  <span className="text-body-lg font-bold text-primary">12</span>
+                  <span className="text-body-lg font-bold text-primary">15</span>
                 </div>
                 <div className="flex-1">
-                  <h5 className="text-body-md font-semibold text-primary">Fluid Mechanics Lab</h5>
-                  <p className="text-[12px] text-secondary">10:00 AM - 12:00 PM</p>
+                  <h5 className="text-body-md font-semibold text-primary">DSP Lab Test</h5>
+                  <p className="text-[12px] text-secondary">02:00 PM - 04:00 PM</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-4">
             <button 
               onClick={() => setIsExperimentModalOpen(true)}
@@ -178,54 +186,82 @@ export const FacultyDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Activity Timeline */}
-      <section className="space-y-8 fade-in-up stagger-9">
+      <section className="space-y-6 fade-in-up stagger-9 pb-12">
         <h4 className="font-label-caps text-label-caps text-primary flex items-center gap-2 uppercase tracking-widest border-b border-border-subtle pb-4">
-          <span className="material-symbols-outlined text-[18px]">history</span> Live Lab Submissions (exp_1_dsp)
+          <span className="material-symbols-outlined text-[18px]">table_chart</span> Live Lab Submissions (exp_1_dsp)
         </h4>
-        <div className="space-y-6 pl-2">
+        
+        <div className="border border-border-subtle rounded-[20px] overflow-hidden shadow-sm bg-card-bg">
           {isLoading ? (
-            <div className="p-4 text-secondary">Loading submissions...</div>
+            <div className="p-8 text-center text-secondary font-body-md">Loading submissions...</div>
           ) : submissions.length === 0 ? (
-            <div className="p-4 text-secondary">No submissions yet for this experiment.</div>
+            <div className="p-8 text-center text-secondary font-body-md">No submissions yet for this experiment.</div>
           ) : (
-            submissions.map((sub) => (
-              <div key={sub.id} className="relative pl-8 border-l border-border-subtle pb-4">
-                <div className={`absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full ring-4 ring-background ${sub.status === 'verified' ? 'bg-success-emerald' : sub.status === 'failed' ? 'bg-error' : 'bg-neural-blue'}`}></div>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-                  <h5 className="font-body-md font-semibold text-primary">Student {sub.user_id} submitted run</h5>
-                  <span className="font-mono-metrics text-mono-metrics text-secondary">
-                    {new Date(sub.submitted_at).toLocaleString()}
-                  </span>
-                </div>
-                <div className="glass-panel p-5 rounded-2xl mt-4 border-l-4 border-neural-blue max-w-2xl overflow-hidden">
-                  <p className="text-on-surface-variant font-mono-metrics text-xs whitespace-pre-wrap">{sub.output || 'No output'}</p>
-                </div>
-                {sub.status === 'unverified' && (
-                  <div className="flex gap-4 mt-4">
-                    <button 
-                      onClick={() => handleVerify(sub.id, 'verified')}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-success-emerald text-white font-label-caps text-label-caps hover:bg-success-emerald/90 transition-colors shadow-md"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span> Approve
-                    </button>
-                    <button 
-                      onClick={() => handleVerify(sub.id, 'rejected')}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-error text-white font-label-caps text-label-caps hover:bg-error/90 transition-colors shadow-md"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">cancel</span> Reject
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-surface-container-low border-b border-border-subtle">
+                  <tr>
+                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Status</th>
+                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Student</th>
+                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Submitted</th>
+                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider w-1/3">Output</th>
+                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider text-right whitespace-nowrap">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-subtle">
+                  {submissions.map((sub) => (
+                    <tr key={sub.id} className="hover:bg-surface-container-low/30 transition-colors">
+                      <td className="py-4 px-6 align-middle">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2.5 h-2.5 rounded-full ${sub.status === 'verified' ? 'bg-success-emerald' : sub.status === 'failed' ? 'bg-error' : 'bg-neural-blue'}`}></div>
+                          <span className="text-xs font-semibold capitalize text-primary">{sub.status || 'Pending'}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 align-middle">
+                        <span className="font-body-md font-semibold text-primary">Student {sub.user_id}</span>
+                      </td>
+                      <td className="py-4 px-6 align-middle whitespace-nowrap">
+                        <span className="font-mono-metrics text-[11px] text-secondary">
+                          {new Date(sub.submitted_at).toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 align-middle max-w-sm truncate">
+                        <code className="text-[11px] text-on-surface-variant font-mono-metrics">
+                          {sub.output ? (sub.output.length > 50 ? sub.output.substring(0, 50) + '...' : sub.output) : 'No output'}
+                        </code>
+                      </td>
+                      <td className="py-4 px-6 align-middle text-right whitespace-nowrap">
+                        {sub.status === 'pending' || !sub.status ? (
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={() => handleVerify(sub.id, 'verified')}
+                              className="px-3 py-1.5 rounded-lg border border-success-emerald/30 text-success-emerald hover:bg-success-emerald hover:text-white font-label-caps text-[10px] transition-colors"
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              onClick={() => handleVerify(sub.id, 'rejected')}
+                              className="px-3 py-1.5 rounded-lg border border-error/30 text-error hover:bg-error hover:text-white font-label-caps text-[10px] transition-colors"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] font-semibold text-secondary uppercase tracking-wider capitalize">{sub.status}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </section>
       <CreateExperimentModal 
         isOpen={isExperimentModalOpen} 
         onClose={() => setIsExperimentModalOpen(false)} 
-        onSuccess={() => {}} 
+        onSuccess={fetchSubmissions} 
       />
     </Layout>
   );

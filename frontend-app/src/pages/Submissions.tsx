@@ -81,7 +81,10 @@ export const Submissions: React.FC = () => {
                   </td>
                   <td className="p-4 font-mono-metrics text-sm text-primary">{sub.score}</td>
                   <td className="p-4 text-right">
-                    <button className="px-4 py-2 bg-neural-blue/10 text-neural-blue hover:bg-neural-blue hover:text-white transition-colors rounded-lg font-label-caps text-[10px] font-bold uppercase">
+                    <button 
+                      onClick={() => alert(`Opening ${sub.id} for ${sub.status === 'Pending Review' ? 'grading' : 'viewing'}...`)}
+                      className="px-4 py-2 bg-neural-blue/10 text-neural-blue hover:bg-neural-blue hover:text-white transition-colors rounded-lg font-label-caps text-[10px] font-bold uppercase"
+                    >
                       {sub.status === 'Pending Review' ? 'Grade Now' : 'View Details'}
                     </button>
                   </td>

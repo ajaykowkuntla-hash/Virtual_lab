@@ -5,7 +5,7 @@ import { apiClient } from '../api/client';
 
 export const Profile: React.FC = () => {
   const { user, token, refreshUser } = useAuth();
-  const role = user?.role === 'faculty' ? 'faculty' : 'student';
+  const role = user?.role === 'admin' ? 'admin' : (user?.role === 'faculty' ? 'faculty' : 'student');
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,6 +25,7 @@ export const Profile: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       await refreshUser();
+      alert('Profile updated successfully!');
       setIsEditing(false);
     } catch (err) {
       console.error('Failed to update profile:', err);

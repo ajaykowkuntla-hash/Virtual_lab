@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { apiClient } from '../api/client';
 
@@ -50,6 +50,17 @@ export const MultiLangIDE: React.FC<MultiLangIDEProps> = ({ onReturn }) => {
   const switchFile = (name: string, lang: string) => {
     setActiveFilename(name);
     setLanguage(lang);
+    setActiveFile('code');
+  };
+
+  const switchLanguage = (lang: string) => {
+    setLanguage(lang);
+    const newFileName = languageConfigs[lang].ext;
+    if (!openFiles.some(f => f.name === newFileName)) {
+      setOpenFiles(prev => [...prev, { name: newFileName, lang }]);
+      setFileCodes(prev => ({ ...prev, [newFileName]: languageConfigs[lang].defaultCode }));
+    }
+    setActiveFilename(newFileName);
     setActiveFile('code');
   };
 

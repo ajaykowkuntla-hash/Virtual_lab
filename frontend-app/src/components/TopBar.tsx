@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface TopBarProps {
-  role: 'student' | 'faculty';
+  role: 'student' | 'faculty' | 'admin';
   isCollapsed: boolean;
   breadcrumbs?: React.ReactNode;
 }
@@ -46,10 +46,8 @@ export const TopBar: React.FC<TopBarProps> = ({ role, isCollapsed, breadcrumbs }
           <span className="material-symbols-outlined text-[14px]">logout</span>
           Sign Out
         </button>
-        <button className="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
-          <span className="material-symbols-outlined">dark_mode</span>
-        </button>
-        <button className="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+
+        <button onClick={() => alert('You have no new notifications.')} className="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
           <span className="material-symbols-outlined">notifications</span>
           <span className="absolute top-2 right-2 w-2 h-2 bg-neural-pink rounded-full"></span>
         </button>

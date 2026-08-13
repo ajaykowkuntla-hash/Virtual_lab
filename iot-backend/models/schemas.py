@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 
 # Request schema for POST /attendance
 class AttendanceCreate(BaseModel):
@@ -29,13 +29,25 @@ class LabSubmitRequest(BaseModel):
     user_id: int
     experiment_id: str
     script_text: str
+    stdin: Optional[str] = None
+
+# Structured error from Octave execution
+class OctaveError(BaseModel):
+    line: Optional[int] = None
+    message: str
 
 # Response schema for POST /lab/submit
 class LabSubmitResponse(BaseModel):
     success: bool
     status: str
-    logs: str
-    plot_b64: Optional[str] = None
+    stdout: Optional[str] = None
+    stderr: Optional[str] = None
+    logs: str                                # Backward compat: combined stdout+stderr
+    figures: List[str] = []                  # Base64-encoded PNG data URIs
+    errors: List[OctaveError] = []           # Parsed error objects
+    plot_b64: Optional[str] = None           # Backward compat: first figure (raw base64)
+    execution_time: float = 0
+    exit_code: int = 0
 
 class LabSubmissionResponse(BaseModel):
     id: int
@@ -82,6 +94,7 @@ class ExperimentCreate(BaseModel):
     lab_type: str
     expected_output: Optional[str] = None
     tolerance: float = 0.01
+    lab_id: Optional[int] = None
 
 class ExperimentResponse(BaseModel):
     id: str
@@ -91,6 +104,8 @@ class ExperimentResponse(BaseModel):
     expected_output: Optional[str]
     tolerance: float
     created_at: datetime
+    assigned_faculty_id: Optional[int]
+    lab_id: Optional[int]
 
     class Config:
         from_attributes = True
@@ -118,6 +133,12 @@ class UserResponse(BaseModel):
     program: Optional[str]
     email: Optional[str]
     contact_number: Optional[str]
+    
+    # New Fields
+    employee_id: Optional[str]
+    roll_number: Optional[str]
+    designation: Optional[str]
+    status: Optional[str]
 
     class Config:
         from_attributes = True
@@ -128,6 +149,25 @@ class UserUpdate(BaseModel):
     program: Optional[str] = None
     email: Optional[str] = None
     contact_number: Optional[str] = None
+    rfid_tag_id: Optional[str] = None
+    employee_id: Optional[str] = None
+    roll_number: Optional[str] = None
+    designation: Optional[str] = None
+    status: Optional[str] = None
+
+class UserCreate(BaseModel):
+    name: str
+    username: str
+    password: str
+    rfid_tag_id: Optional[str] = None
+    department: Optional[str] = None
+    program: Optional[str] = None
+    email: Optional[str] = None
+    contact_number: Optional[str] = None
+    employee_id: Optional[str] = None
+    roll_number: Optional[str] = None
+    designation: Optional[str] = None
+    status: Optional[str] = "Active"
 
 class SemesterCreate(BaseModel):
     name: str
@@ -159,13 +199,13 @@ class EnrollmentResponse(BaseModel):
 
 class FacultyAssignmentCreate(BaseModel):
     class_id: int
-    subject: str
+    course_id: int
 
 class FacultyAssignmentResponse(BaseModel):
     id: int
     faculty_id: int
     class_id: int
-    subject: str
+    course_id: int
     semester_id: int
 
     class Config:
@@ -173,3 +213,112 @@ class FacultyAssignmentResponse(BaseModel):
 
 class StudentPromotionMap(BaseModel):
     promotions: list[EnrollmentCreate]
+
+class EventCreate(BaseModel):
+    title: str
+    date: str
+    time: str
+    location: str
+    type: str
+
+class EventResponse(BaseModel):
+    id: int
+    title: str
+    date: str
+    time: str
+    location: str
+    type: str
+    created_by: int
+    semester_id: Optional[int]
+
+    class Config:
+        from_attributes = True
+
+class DepartmentCreate(BaseModel):
+    name: str
+
+class DepartmentResponse(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        from_attributes = True
+
+class CourseCreate(BaseModel):
+    name: str
+    department_id: int
+    semester_id: int
+
+class CourseResponse(BaseModel):
+    id: int
+    name: str
+    department_id: int
+    semester_id: int
+
+    class Config:
+        from_attributes = True
+
+class LabCreate(BaseModel):
+    name: str
+    course_id: int
+
+class LabResponse(BaseModel):
+    id: int
+    name: str
+    course_id: int
+
+    class Config:
+        from_attributes = True
+
+class AnnouncementCreate(BaseModel):
+    title: Optional[str] = None
+    content: str
+    target_role: Optional[str] = None
+    course_id: Optional[int] = None
+    lab_id: Optional[int] = None
+
+class AnnouncementResponse(BaseModel):
+    id: int
+    title: Optional[str]
+    content: str
+    author_id: int
+    target_role: Optional[str]
+    course_id: Optional[int]
+    lab_id: Optional[int]
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+class CalendarEventCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    start_time: datetime
+    end_time: datetime
+    date: str
+    time: str
+    location: str
+    type: str # 'blue' or 'pink'
+    target_role: Optional[str] = None
+    course_id: Optional[int] = None
+    lab_id: Optional[int] = None
+
+class CalendarEventResponse(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+    start_time: datetime
+    end_time: datetime
+    date: str
+    time: str
+    location: str
+    type: str
+    created_by: int
+    target_role: Optional[str]
+    course_id: Optional[int]
+    lab_id: Optional[int]
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True

@@ -71,9 +71,7 @@ export const ManageLabs: React.FC = () => {
               <div key={exp.experiment_id} className="bg-surface-container p-6 rounded-2xl border border-border-subtle shadow-sm hover:shadow-md hover:border-primary/30 transition-all group">
                 <div className="flex justify-between items-start mb-4">
                   <span className="px-3 py-1 bg-neural-blue/10 text-neural-blue text-[10px] font-bold uppercase tracking-wider rounded-full">Active</span>
-                  <button className="text-secondary opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary">
-                    <span className="material-symbols-outlined text-[20px]">edit</span>
-                  </button>
+
                 </div>
                 <h3 className="font-body-lg font-semibold text-primary mb-1">{exp.title}</h3>
                 <p className="text-xs font-mono-metrics text-secondary mb-4">ID: {exp.experiment_id}</p>
@@ -89,10 +87,8 @@ export const ManageLabs: React.FC = () => {
 
       <CreateExperimentModal 
         isOpen={isModalOpen} 
-        onClose={() => {
-          setIsModalOpen(false);
-          fetchExperiments();
-        }} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={fetchExperiments}
       />
     </Layout>
   );

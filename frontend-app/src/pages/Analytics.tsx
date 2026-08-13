@@ -12,7 +12,7 @@ export const Analytics: React.FC = () => {
           </h1>
           <p className="font-body-lg text-secondary">Class performance metrics and lab completion rates.</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-surface-container rounded-xl border border-border-subtle hover:bg-surface-container-high transition-colors">
+        <button onClick={() => alert('Generating CSV export of class analytics...')} className="flex items-center gap-2 px-6 py-3 bg-surface-container rounded-xl border border-border-subtle hover:bg-surface-container-high transition-colors">
           <span className="material-symbols-outlined text-[18px]">download</span>
           <span className="font-label-caps text-label-caps text-primary">Export Data</span>
         </button>

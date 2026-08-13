@@ -23,7 +23,8 @@ export const CreateExperimentModal: React.FC<CreateExperimentModalProps> = ({ is
     setError('');
 
     try {
-      await apiClient.post('/lab/experiments', {
+      const endpoint = '/lab/experiments';
+      await apiClient.post(endpoint, {
         id,
         title,
         expected_output: expectedOutput,

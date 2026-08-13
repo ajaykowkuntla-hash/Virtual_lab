@@ -8,6 +8,10 @@ from models.schemas import SemesterCreate, SemesterResponse, StudentPromotionMap
 
 router = APIRouter(prefix="/semesters", tags=["Semesters"])
 
+@router.get("/", response_model=List[SemesterResponse])
+def list_semesters(db: Session = Depends(get_db)):
+    return db.query(Semester).all()
+
 @router.post("/", response_model=SemesterResponse)
 def create_semester(data: SemesterCreate, db: Session = Depends(get_db)):
     semester = Semester(

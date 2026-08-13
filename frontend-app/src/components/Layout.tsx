@@ -5,7 +5,7 @@ import { TopBar } from './TopBar';
 
 interface LayoutProps {
   children: React.ReactNode;
-  role: 'student' | 'faculty';
+  role: 'student' | 'faculty' | 'admin';
   fullWidth?: boolean;
   breadcrumbs?: React.ReactNode;
 }

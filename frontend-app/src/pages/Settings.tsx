@@ -6,11 +6,10 @@ import { useNavigate } from 'react-router-dom';
 export const Settings: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const role = user?.role === 'faculty' ? 'faculty' : 'student';
+  const role = user?.role === 'admin' ? 'admin' : (user?.role === 'faculty' ? 'faculty' : 'student');
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [emailAlerts, setEmailAlerts] = useState(false);
-  const [darkMode, setDarkMode] = useState(false); // Placeholder state
 
   const handleLogout = () => {
     logout();
@@ -30,6 +29,9 @@ export const Settings: React.FC = () => {
         {/* Sidebar Nav for Settings */}
         <div className="glass-panel p-4 rounded-3xl border border-white/60 shadow-lg h-fit">
           <nav className="flex flex-col space-y-2">
+            <button onClick={() => alert('Settings saved successfully!')} className="px-6 py-3 bg-primary text-white font-label-caps text-label-caps font-bold rounded-xl shadow-lg hover:bg-primary/90 transition-all mb-4">
+              Save Changes
+            </button>
             <button className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary text-white font-label-caps text-label-caps">
               <span className="material-symbols-outlined text-[18px]">tune</span> General
             </button>
@@ -48,27 +50,6 @@ export const Settings: React.FC = () => {
 
         {/* Settings Content */}
         <div className="md:col-span-2 space-y-8">
-          {/* Preferences */}
-          <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-lg">
-            <h3 className="font-label-caps text-label-caps text-primary mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[20px]">palette</span>
-              Appearance
-            </h3>
-            
-            <div className="flex items-center justify-between py-4 border-b border-border-subtle">
-              <div>
-                <p className="font-body-md font-semibold text-primary">Dark Mode</p>
-                <p className="font-body-sm text-secondary">Toggle the application theme.</p>
-              </div>
-              <button 
-                onClick={() => setDarkMode(!darkMode)}
-                className={`w-14 h-8 rounded-full p-1 transition-colors ${darkMode ? 'bg-primary' : 'bg-surface-container-high border border-border-subtle'}`}
-              >
-                <div className={`w-6 h-6 rounded-full bg-white transition-transform ${darkMode ? 'translate-x-6' : 'translate-x-0'}`}></div>
-              </button>
-            </div>
-          </div>
-
           {/* Notifications */}
           <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-lg">
             <h3 className="font-label-caps text-label-caps text-primary mb-6 flex items-center gap-2">

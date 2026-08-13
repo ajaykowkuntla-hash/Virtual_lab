@@ -60,3 +60,17 @@
   .stagger-8 { animation-delay: 0.8s; }
   .stagger-9 { animation-delay: 0.9s; }
 }
+
+/* Monaco Error Decorations */
+.error-line-decoration {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+  border-left: 3px solid #ef4444 !important;
+}
+.error-glyph-margin {
+  background-color: #ef4444;
+  border-radius: 50%;
+  width: 8px !important;
+  height: 8px !important;
+  margin-left: 4px;
+  margin-top: 6px;
+}
