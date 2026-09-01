@@ -80,24 +80,31 @@ def submit_lab_script(data: LabSubmitRequest, db: Session = Depends(get_db)):
     # 3. Execute the script in the Docker sandbox (returns structured result)
     result = execute_octave_script(data.script_text, expected_output, data.stdin)
     
-    # 4. Save the submission to the database
+    # 4. Handle persistence and status based on is_final_submission
     is_verified = (result["status"] == "verified")
+    
+    status = result["status"]
+    
+    if data.is_final_submission:
+        status = "PENDING_REVIEW"
+        
+        active_semester = db.query(Semester).filter(Semester.is_active == True).first()
+        semester_id = active_semester.id if active_semester else None
 
-    active_semester = db.query(Semester).filter(Semester.is_active == True).first()
-    semester_id = active_semester.id if active_semester else None
-
-    submission = LabSubmission(
-        user_id=data.user_id,
-        experiment_id=data.experiment_id,
-        semester_id=semester_id,
-        script_text=data.script_text,
-        output=result["logs"],
-        status=result["status"],
-        submitted_at=datetime.utcnow()
-    )
-    db.add(submission)
-    db.commit()
-    db.refresh(submission)
+        submission = LabSubmission(
+            user_id=data.user_id,
+            experiment_id=data.experiment_id,
+            semester_id=semester_id,
+            script_text=data.script_text,
+            output=result["logs"],
+            status=status,
+            submitted_at=datetime.utcnow()
+        )
+        db.add(submission)
+        db.commit()
+        db.refresh(submission)
+        
+    result["status"] = status
     
     # 5. Build structured error objects for the response
     error_objects = [OctaveError(line=e.get("line"), message=e.get("message", "")) for e in result.get("errors", [])]

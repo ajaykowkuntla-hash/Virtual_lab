@@ -1,18 +1,10 @@
-import docker
 import tempfile
 import os
 import shutil
 import base64
 import re
 from typing import Union, List
-from requests.exceptions import ReadTimeout
 
-# Initialize Docker client
-try:
-    client = docker.from_env()
-except Exception as e:
-    print(f"Warning: Docker not available ({e})")
-    client = None
 
 def verify_numeric_output(logs: str, expected_values: list, tolerance=0.01) -> bool:
     if not expected_values:
@@ -40,40 +32,34 @@ def verify_numeric_output(logs: str, expected_values: list, tolerance=0.01) -> b
 
 def execute_octave_script(script_text: str, expected_output: Union[str, List[float]]) -> dict:
     """
-    Executes an Octave script securely in a Docker container.
+    Executes an Octave script securely via a remote microservice.
     Returns a dict with status, logs, and a base64 encoded plot if one was generated.
     """
-    if not client:
-        return {"status": "failed", "logs": "Docker is not running on the server.", "plot": None}
+    octave_service_url = os.getenv("OCTAVE_SERVICE_URL", "http://localhost:8000/execute")
+    octave_service_secret = os.getenv("OCTAVE_SERVICE_SECRET", "dev-secret-key")
 
-    # Create a secure, isolated temporary directory for this specific submission
-    temp_dir = tempfile.mkdtemp()
-    script_path = os.path.join(temp_dir, "script.m")
-    
-    # Write the student's script to the temp directory
-    with open(script_path, "w") as f:
-        f.write(script_text)
-
-    container = None
     try:
-        # Run the container in detached mode so we can enforce our own timeout
-        container = client.containers.run(
-            image="octave-lab",
-            command=["octave", "--no-gui", "--eval", "script"], # Evaluate script.m
-            volumes={temp_dir: {'bind': '/workspace', 'mode': 'rw'}},
-            working_dir="/workspace",
-            network_mode="none",     # Security: No internet access
-            mem_limit="128m",        # Security: Prevent out-of-memory crashes
-            pids_limit=50,           # Security: Prevent fork bombs
-            detach=True              # Run in background to manage timeout
-        )
+        import requests
         
-        # Wait for the container to finish (5 second timeout)
-        result = container.wait(timeout=5)
+        headers = {"Authorization": f"Bearer {octave_service_secret}"}
+        payload = {
+            "script_text": script_text
+        }
         
-        # Fetch the standard output and errors
-        logs = container.logs().decode('utf-8')
-        exit_code = result.get('StatusCode', 1)
+        response = requests.post(octave_service_url, json=payload, headers=headers, timeout=15)
+        response.raise_for_status()
+        
+        result = response.json()
+        
+        execution_success = result.get("success", False)
+        stdout = result.get("stdout", "")
+        stderr = result.get("stderr", "")
+        exit_code = result.get("exit_code", 1)
+        figures = result.get("figures", [])
+        
+        logs = stdout
+        if stderr:
+            logs += f"\n{stderr}" if logs else stderr
         
         # Check if the execution succeeded and if it matches the expected output
         if exit_code != 0:
@@ -95,12 +81,10 @@ def execute_octave_script(script_text: str, expected_output: Union[str, List[flo
         else:
             status = "verified"
 
-        # Check if a plot was generated and read it
+        # Extract the plot if one was returned
         plot_b64 = None
-        plot_path = os.path.join(temp_dir, "output_plot.png")
-        if os.path.exists(plot_path):
-            with open(plot_path, "rb") as img_file:
-                plot_b64 = base64.b64encode(img_file.read()).decode('utf-8')
+        if figures:
+            plot_b64 = figures[0].replace("data:image/png;base64,", "")
 
         return {
             "status": status,
@@ -108,19 +92,9 @@ def execute_octave_script(script_text: str, expected_output: Union[str, List[flo
             "plot": plot_b64
         }
         
-    except ReadTimeout:
-        # Security: Container took too long (infinite loop)
-        if container:
-            container.kill()
-        return {"status": "failed", "logs": "Execution timed out (infinite loop?).", "plot": None}
+    except requests.exceptions.Timeout:
+        return {"status": "failed", "logs": "Execution timed out (infinite loop or service slow).", "plot": None}
+    except requests.exceptions.RequestException as e:
+        return {"status": "failed", "logs": f"Microservice communication error: {str(e)}", "plot": None}
     except Exception as e:
         return {"status": "failed", "logs": f"System error: {str(e)}", "plot": None}
-    finally:
-        # Cleanup container
-        if container:
-            try:
-                container.remove(force=True)
-            except:
-                pass
-        # Cleanup temporary directory from host
-        shutil.rmtree(temp_dir, ignore_errors=True)

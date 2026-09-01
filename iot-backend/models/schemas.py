@@ -24,12 +24,12 @@ class AttendanceSuccessResponse(BaseModel):
     message: str
     log: AttendanceResponse
 
-# Request schema for POST /lab/submit
 class LabSubmitRequest(BaseModel):
     user_id: int
     experiment_id: str
     script_text: str
     stdin: Optional[str] = None
+    is_final_submission: Optional[bool] = False
 
 # Structured error from Octave execution
 class OctaveError(BaseModel):
@@ -191,8 +191,11 @@ class EnrollmentCreate(BaseModel):
 class EnrollmentResponse(BaseModel):
     id: int
     student_id: int
-    class_id: int
+    class_id: Optional[int] = None
     semester_id: int
+    course_id: Optional[int] = None
+    lab_id: Optional[int] = None
+    assigned_faculty_id: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -204,9 +207,10 @@ class FacultyAssignmentCreate(BaseModel):
 class FacultyAssignmentResponse(BaseModel):
     id: int
     faculty_id: int
-    class_id: int
-    course_id: int
-    semester_id: int
+    class_id: Optional[int] = None
+    course_id: Optional[int] = None
+    semester_id: Optional[int] = None
+    lab_id: Optional[int] = None
 
     class Config:
         from_attributes = True

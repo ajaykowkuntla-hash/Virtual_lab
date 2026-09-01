@@ -47,20 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollap
         {isAdmin && (
           <div className="space-y-4">
             {/* OVERVIEW */}
-            <div>
-              {!isCollapsed && <span className="block text-[10px] font-bold text-secondary uppercase tracking-widest px-4 mb-2">Overview</span>}
-              <NavLink 
-                end
-                to="/admin" 
-                className={({ isActive }) => 
-                  `flex items-center gap-3 px-4 py-2.5 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
-                } 
-                title="Dashboard"
-              >
-                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>dashboard</span>
-                {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">Dashboard</span>}
-              </NavLink>
-            </div>
+
 
             {/* PEOPLE */}
             <div>

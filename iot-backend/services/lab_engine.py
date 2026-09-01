@@ -1,4 +1,3 @@
-import docker
 import tempfile
 import os
 import shutil
@@ -7,14 +6,7 @@ import re
 import glob
 import time
 from typing import Union, List, Optional
-from requests.exceptions import ReadTimeout
 
-# Initialize Docker client
-try:
-    client = docker.from_env()
-except Exception as e:
-    print(f"Warning: Docker not available ({e})")
-    client = None
 
 def verify_numeric_output(logs: str, expected_values: list, tolerance=0.01) -> bool:
     if not expected_values:
@@ -138,120 +130,41 @@ end
 
 def execute_octave_script(script_text: str, expected_output: Union[str, List[float], None] = None, stdin_text: str = None) -> dict:
     """
-    Executes an Octave script securely in a Docker container.
+    Executes an Octave script securely via a remote microservice.
     Returns a structured dict with:
       success, status, stdout, stderr, figures[], errors[], execution_time, exit_code, logs, plot
     """
-    if not client:
-        return {
-            "success": False,
-            "status": "failed",
-            "stdout": "",
-            "stderr": "Docker is not running on the server.",
-            "figures": [],
-            "errors": [{"line": None, "message": "Docker is not running on the server."}],
-            "execution_time": 0,
-            "exit_code": 1,
-            "logs": "Docker is not running on the server.",
-            "plot": None
-        }
+    octave_service_url = os.getenv("OCTAVE_SERVICE_URL", "http://localhost:8000/execute")
+    octave_service_secret = os.getenv("OCTAVE_SERVICE_SECRET", "dev-secret-key")
 
-    # Create a secure, isolated temporary directory for this specific submission
-    temp_dir = tempfile.mkdtemp()
-    
-    # Write the student's original script (unchanged)
-    student_script_path = os.path.join(temp_dir, "student_code.m")
-    with open(student_script_path, "w") as f:
-        f.write(script_text)
-    
-    # Write the wrapper script that runs student code + captures plots
-    wrapper_script = _build_wrapper_script("/workspace/student_code.m")
-    wrapper_path = os.path.join(temp_dir, "wrapper.m")
-    with open(wrapper_path, "w") as f:
-        f.write(wrapper_script)
-
-    # Write the stdin text if provided
-    input_redirect = ""
-    if stdin_text is not None:
-        stdin_path = os.path.join(temp_dir, "input.txt")
-        with open(stdin_path, "w") as f:
-            f.write(stdin_text)
-        input_redirect = "< /workspace/input.txt "
-
-    container = None
-    start_time = time.time()
-    
     try:
-        # Run the container — separate stdout and stderr
-        # The wrapper script runs the student code via source() and captures plots afterward
-        container = client.containers.run(
-            image="octave-lab",
-            command=[
-                "sh", "-c",
-                f"octave --no-gui --eval wrapper {input_redirect}> /workspace/stdout.log 2> /workspace/stderr.log; echo $? > /workspace/exitcode.log"
-            ],
-            volumes={temp_dir: {'bind': '/workspace', 'mode': 'rw'}},
-            working_dir="/workspace",
-            network_mode="none",     # Security: No internet access
-            mem_limit="128m",        # Security: Prevent out-of-memory crashes
-            pids_limit=50,           # Security: Prevent fork bombs
-            detach=True,             # Run in background to manage timeout
-        )
+        import requests
+        start_time = time.time()
         
-        # Wait for the container to finish (10 second timeout for complex scripts)
-        result = container.wait(timeout=10)
-        execution_time = round(time.time() - start_time, 3)
+        headers = {"Authorization": f"Bearer {octave_service_secret}"}
+        payload = {
+            "script_text": script_text,
+            "stdin_text": stdin_text
+        }
         
-        # Read stdout
-        stdout_path = os.path.join(temp_dir, "stdout.log")
-        stdout = ""
-        if os.path.exists(stdout_path):
-            with open(stdout_path, "r") as f:
-                stdout = f.read()
+        response = requests.post(octave_service_url, json=payload, headers=headers, timeout=15)
+        response.raise_for_status()
         
-        # Read stderr
-        stderr_path = os.path.join(temp_dir, "stderr.log")
-        stderr = ""
-        if os.path.exists(stderr_path):
-            with open(stderr_path, "r") as f:
-                stderr = f.read()
+        result = response.json()
         
-        # Read exit code from the script's own exit code (not the shell wrapper)
-        exitcode_path = os.path.join(temp_dir, "exitcode.log")
-        exit_code = 1
-        if os.path.exists(exitcode_path):
-            with open(exitcode_path, "r") as f:
-                try:
-                    exit_code = int(f.read().strip())
-                except ValueError:
-                    exit_code = result.get('StatusCode', 1)
-        
-        # Parse errors from stderr
-        errors = parse_octave_errors(stderr)
-        
-        # Collect all generated figure PNGs (multi-figure support)
-        figures = []
-        figure_files = sorted(glob.glob(os.path.join(temp_dir, "output_plot_*.png")))
-        
-        # Also check for legacy single output_plot.png
-        legacy_plot = os.path.join(temp_dir, "output_plot.png")
-        if os.path.exists(legacy_plot) and legacy_plot not in figure_files:
-            figure_files.insert(0, legacy_plot)
-        
-        for fig_path in figure_files:
-            if os.path.getsize(fig_path) > 0:  # Skip empty/invalid images
-                with open(fig_path, "rb") as img_file:
-                    b64 = base64.b64encode(img_file.read()).decode('utf-8')
-                    figures.append(f"data:image/png;base64,{b64}")
-        
-        # Determine execution success (separate from verification)
-        execution_success = (exit_code == 0 and not errors)
+        execution_success = result.get("success", False)
+        stdout = result.get("stdout", "")
+        stderr = result.get("stderr", "")
+        exit_code = result.get("exit_code", 1)
+        errors = result.get("errors", [])
+        figures = result.get("figures", [])
+        execution_time = result.get("execution_time", round(time.time() - start_time, 3))
         
         # Combined logs for backward compatibility
         combined_logs = stdout
         if stderr:
             combined_logs += f"\n{stderr}" if combined_logs else stderr
-        
+            
         # Determine verification status (existing grading logic)
         if not execution_success:
             status = "failed"
@@ -272,13 +185,13 @@ def execute_octave_script(script_text: str, expected_output: Union[str, List[flo
         else:
             # No auto-grader for this experiment
             status = "pending" if execution_success else "failed"
-        
+            
         # For backward compat: plot_b64 = first figure without data URI prefix
         plot_b64 = None
         if figures:
             # Strip the data:image/png;base64, prefix for legacy consumers
             plot_b64 = figures[0].replace("data:image/png;base64,", "")
-        
+            
         return {
             "success": execution_success,
             "status": status,
@@ -292,24 +205,32 @@ def execute_octave_script(script_text: str, expected_output: Union[str, List[flo
             "plot": plot_b64
         }
         
-    except ReadTimeout:
+    except requests.exceptions.Timeout:
         execution_time = round(time.time() - start_time, 3)
-        # Security: Container took too long (infinite loop)
-        if container:
-            try:
-                container.kill()
-            except:
-                pass
         return {
             "success": False,
             "status": "timeout",
             "stdout": "",
-            "stderr": "Execution timed out. Your script may contain an infinite loop or excessive computation.",
+            "stderr": "Execution timed out. Service took too long to respond.",
             "figures": [],
             "errors": [{"line": None, "message": "Execution timed out. Check for infinite loops."}],
             "execution_time": execution_time,
             "exit_code": 124,
-            "logs": "Execution timed out (infinite loop?).",
+            "logs": "Execution timed out (infinite loop or service slow).",
+            "plot": None
+        }
+    except requests.exceptions.RequestException as e:
+        execution_time = round(time.time() - start_time, 3)
+        return {
+            "success": False,
+            "status": "failed",
+            "stdout": "",
+            "stderr": f"Microservice communication error: {str(e)}",
+            "figures": [],
+            "errors": [{"line": None, "message": f"Microservice communication error: {str(e)}"}],
+            "execution_time": execution_time,
+            "exit_code": 1,
+            "logs": f"Microservice communication error: {str(e)}",
             "plot": None
         }
     except Exception as e:
@@ -326,12 +247,4 @@ def execute_octave_script(script_text: str, expected_output: Union[str, List[flo
             "logs": f"System error: {str(e)}",
             "plot": None
         }
-    finally:
-        # Cleanup container
-        if container:
-            try:
-                container.remove(force=True)
-            except:
-                pass
-        # Cleanup temporary directory from host
-        shutil.rmtree(temp_dir, ignore_errors=True)
+
