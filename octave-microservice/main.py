@@ -140,14 +140,14 @@ def execute_octave(request: ExecutionRequest, token: str = Depends(verify_token)
         command = f"octave --no-gui --eval \"source('{wrapper_path}')\" {input_redirect}"
         
         try:
-            # 10 second timeout matching original implementation
+            # Increased timeout to 45 seconds for cloud instances (Render free tier is slower)
             process = subprocess.run(
                 command,
                 shell=True,
                 cwd=temp_dir,
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=45
             )
             stdout = process.stdout
             stderr = process.stderr
@@ -287,7 +287,7 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
             try:
                 comp_process = subprocess.run(
                     compile_cmd, shell=True, cwd=temp_dir,
-                    capture_output=True, text=True, timeout=10
+                    capture_output=True, text=True, timeout=30
                 )
                 compile_output = comp_process.stderr if comp_process.returncode != 0 else comp_process.stdout
                 
@@ -312,7 +312,7 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
         try:
             exec_process = subprocess.run(
                 exec_cmd, shell=True, cwd=temp_dir,
-                capture_output=True, text=True, timeout=5
+                capture_output=True, text=True, timeout=15
             )
             execution_time = time.time() - start_time
             
