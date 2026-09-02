@@ -7,7 +7,6 @@ from models.models import User
 from security import SECRET_KEY, ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
-oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="auth/login", auto_error=False)
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -53,21 +52,3 @@ def get_current_faculty_or_admin(current_user: User = Depends(get_current_user))
             detail="The user doesn't have enough privileges"
         )
     return current_user
-
-def get_current_faculty_optional(token: str = Depends(oauth2_scheme_optional), db: Session = Depends(get_db)):
-    if not token:
-        return db.query(User).filter(User.role == "faculty").first()
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload.get("sub")
-        if user_id is None:
-            return db.query(User).filter(User.role == "faculty").first()
-        user_id_int = int(user_id)
-    except (JWTError, ValueError):
-        return db.query(User).filter(User.role == "faculty").first()
-        
-    user = db.query(User).filter(User.id == user_id_int).first()
-    if user is None:
-        return db.query(User).filter(User.role == "faculty").first()
-    return user
-

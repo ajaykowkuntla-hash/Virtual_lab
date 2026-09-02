@@ -52,8 +52,10 @@ def log_attendance(data: AttendanceCreate, db: Session = Depends(get_db)):
         log=new_log
     )
 
+from dependencies import get_current_faculty, get_current_faculty_or_admin
+
 @router.get("/{class_id}", response_model=List[AttendanceResponse])
-def get_class_attendance(class_id: int, db: Session = Depends(get_db)):
+def get_class_attendance(class_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_faculty_or_admin)):
     # Fetch all logs for the given class_id
     logs = db.query(AttendanceLog).filter(AttendanceLog.class_id == class_id).all()
     

@@ -5,9 +5,13 @@ from models.database import Base, engine
 
 app = FastAPI(title="IoT Framework Backend")
 
+import os
+
+FRONTEND_CORS_ORIGINS = os.getenv("FRONTEND_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to frontend URL
+    allow_origins=FRONTEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

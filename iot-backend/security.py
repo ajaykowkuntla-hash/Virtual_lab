@@ -7,8 +7,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# We expect this to be set in .env. Fallback for demo purposes.
-SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey_for_iot_demo_only")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is not set. Cannot start server securely.")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

@@ -4,11 +4,11 @@ from datetime import datetime
 import json
 
 from models.database import get_db
-from models.models import User, LabSubmission, Experiment, Semester, Lab, Course
+from models.models import User, LabSubmission, Experiment, Semester, Lab, Course, FacultyAssignment
 from models.schemas import LabSubmitRequest, LabSubmitResponse, LabSubmissionResponse, LabVerifyRequest, ExperimentCreate, ExperimentResponse, CodeExecuteRequest, CodeExecuteResponse, LabResponse, CourseResponse, OctaveError
 from services.lab_engine import execute_octave_script
 from services.multi_lang_engine import execute_code as multi_lang_execute
-from dependencies import get_current_faculty, get_current_faculty_or_admin, get_current_faculty_optional
+from dependencies import get_current_faculty, get_current_faculty_or_admin
 from typing import List, Optional
 
 router = APIRouter(prefix="/lab", tags=["Virtual Lab"])
@@ -55,12 +55,16 @@ def get_experiment(experiment_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Experiment not found")
     return experiment
 
+from dependencies import get_current_user
+
 @router.post("/submit", response_model=LabSubmitResponse)
-def submit_lab_script(data: LabSubmitRequest, db: Session = Depends(get_db)):
+def submit_lab_script(data: LabSubmitRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # 1. Verify user exists and is a student
-    user = db.query(User).filter(User.id == data.user_id).first()
-    if not user or user.role != "student":
+    if current_user.role != "student":
         raise HTTPException(status_code=403, detail="Only registered students can submit lab scripts.")
+        
+    # Enforce identity from JWT
+    user_id = current_user.id
         
     # 2. Verify experiment exists and get expected output
     experiment = db.query(Experiment).filter(Experiment.id == data.experiment_id).first()
@@ -92,7 +96,7 @@ def submit_lab_script(data: LabSubmitRequest, db: Session = Depends(get_db)):
         semester_id = active_semester.id if active_semester else None
 
         submission = LabSubmission(
-            user_id=data.user_id,
+            user_id=user_id,
             experiment_id=data.experiment_id,
             semester_id=semester_id,
             script_text=data.script_text,
@@ -145,8 +149,22 @@ def get_course_labs(course_id: int, db: Session = Depends(get_db)):
 def get_experiment_submissions(
     experiment_id: str, 
     db: Session = Depends(get_db),
-    current_faculty: User = Depends(get_current_faculty_optional)
+    current_user: User = Depends(get_current_faculty_or_admin)
 ):
+    if current_user.role == "faculty":
+        experiment = db.query(Experiment).filter(Experiment.id == experiment_id).first()
+        if not experiment:
+            raise HTTPException(status_code=404, detail="Experiment not found")
+        
+        # Check scope
+        assignment = db.query(FacultyAssignment).filter(
+            FacultyAssignment.faculty_id == current_user.id,
+            FacultyAssignment.lab_id == experiment.lab_id
+        ).first()
+        
+        if not assignment:
+            raise HTTPException(status_code=403, detail="You are not assigned to this lab/experiment.")
+            
     submissions = db.query(LabSubmission).filter(LabSubmission.experiment_id == experiment_id).order_by(LabSubmission.submitted_at.desc()).all()
     return submissions
 
@@ -155,14 +173,28 @@ def verify_submission(
     submission_id: int, 
     data: LabVerifyRequest, 
     db: Session = Depends(get_db),
-    current_faculty: User = Depends(get_current_faculty_optional)
+    current_user: User = Depends(get_current_faculty_or_admin)
 ):
     submission = db.query(LabSubmission).filter(LabSubmission.id == submission_id).first()
     if not submission:
         raise HTTPException(status_code=404, detail="Submission not found.")
         
+    if current_user.role == "faculty":
+        experiment = db.query(Experiment).filter(Experiment.id == submission.experiment_id).first()
+        if not experiment:
+            raise HTTPException(status_code=404, detail="Experiment not found")
+        
+        # Check scope
+        assignment = db.query(FacultyAssignment).filter(
+            FacultyAssignment.faculty_id == current_user.id,
+            FacultyAssignment.lab_id == experiment.lab_id
+        ).first()
+        
+        if not assignment:
+            raise HTTPException(status_code=403, detail="You are not assigned to this lab/experiment.")
+            
     submission.status = data.status
-    submission.verified_by = current_faculty.id
+    submission.verified_by = current_user.id
     db.commit()
     db.refresh(submission)
     return submission
@@ -170,7 +202,7 @@ def verify_submission(
 
 
 @router.post("/code/execute", response_model=CodeExecuteResponse)
-async def execute_code(request: CodeExecuteRequest):
+async def execute_code(request: CodeExecuteRequest, current_user: User = Depends(get_current_user)):
     # This calls the custom Docker-based multi-language engine
     result = multi_lang_execute(
         language=request.language,

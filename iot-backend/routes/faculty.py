@@ -5,12 +5,17 @@ from typing import List
 from models.database import get_db
 from models.models import Semester, FacultyAssignment, User, ClassSession, Enrollment, LabSubmission, Experiment, CalendarEvent
 from models.schemas import FacultyAssignmentCreate, FacultyAssignmentResponse, UserResponse
-from dependencies import get_current_user
+from dependencies import get_current_user, get_current_admin
 
 router = APIRouter(prefix="/faculty", tags=["Faculty"])
 
 @router.post("/{faculty_id}/assignments", response_model=FacultyAssignmentResponse)
-def set_faculty_assignment(faculty_id: int, data: FacultyAssignmentCreate, db: Session = Depends(get_db)):
+def set_faculty_assignment(
+    faculty_id: int, 
+    data: FacultyAssignmentCreate, 
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
     faculty = db.query(User).filter(User.id == faculty_id, User.role == "faculty").first()
     if not faculty:
         raise HTTPException(status_code=404, detail="Faculty member not found")

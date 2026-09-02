@@ -136,24 +136,34 @@ def execute_octave(request: ExecutionRequest, token: str = Depends(verify_token)
 
         start_time = time.time()
         
-        # Run Octave directly using subprocess
-        command = f"octave --no-gui --eval \"source('{wrapper_path}')\" {input_redirect}"
-        
         try:
+            stdin_file = open(stdin_path, "r") if request.stdin_text is not None else None
+            
             # Increased timeout to 45 seconds for cloud instances (Render free tier is slower)
+            
+            # Sanitize environment to prevent exposing OCTAVE_SERVICE_SECRET
+            safe_env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin")}
+            
             process = subprocess.run(
-                command,
-                shell=True,
+                ["octave", "--no-gui", "--eval", f"source('{wrapper_path}')"],
+                shell=False,
                 cwd=temp_dir,
+                stdin=stdin_file,
                 capture_output=True,
                 text=True,
-                timeout=45
+                timeout=45,
+                env=safe_env
             )
+            
+            if stdin_file:
+                stdin_file.close()
             stdout = process.stdout
             stderr = process.stderr
             exit_code = process.returncode
             
         except subprocess.TimeoutExpired as e:
+            if stdin_file and not stdin_file.closed:
+                stdin_file.close()
             execution_time = round(time.time() - start_time, 3)
             return {
                 "success": False,
@@ -249,22 +259,18 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
         }
         
     config = LANGUAGE_CONFIG[lang]
-    actual_filename = request.filename if request.filename else config["filename"]
-    compile_cmd = config["compile_cmd"]
-    exec_cmd = config["command"]
     
-    if request.filename:
-        base, _ = os.path.splitext(request.filename)
-        if lang == "c":
-            compile_cmd = f"gcc {request.filename} -o out -lm"
-        elif lang == "cpp":
-            compile_cmd = f"g++ {request.filename} -o out -lm"
-        elif lang == "java":
-            compile_cmd = f"javac {request.filename}"
-            exec_cmd = f"java {base}"
-        elif lang == "python":
-            exec_cmd = f"python3 {request.filename}"
-
+    # ALWAYS use the safe filename from config to prevent path traversal and shell injection
+    actual_filename = config["filename"]
+    
+    # We still accept the requested filename as metadata but DO NOT use it for execution
+    # except maybe for Java where class name matters, but for safety we enforce Main.java.
+    if lang == "java" and request.filename and request.filename.endswith(".java"):
+        # Very strict validation if we allow custom java names
+        safe_name = re.sub(r'[^a-zA-Z0-9_]', '', request.filename[:-5])
+        if safe_name:
+            actual_filename = f"{safe_name}.java"
+            
     temp_dir = tempfile.mkdtemp()
     
     try:
@@ -272,22 +278,41 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
         with open(source_path, "w") as f:
             f.write(request.source_code)
             
-        input_redirect = ""
+        stdin_path = None
         if request.stdin is not None:
             stdin_path = os.path.join(temp_dir, "stdin.txt")
             with open(stdin_path, "w") as f:
                 f.write(request.stdin)
-            input_redirect = f"< {stdin_path}"
-            exec_cmd += " " + input_redirect
 
         compile_output = None
         
+        # Build safe lists for subprocess (shell=False)
+        compile_cmd_list = None
+        exec_cmd_list = None
+        
+        if lang == "c":
+            compile_cmd_list = ["gcc", actual_filename, "-o", "out", "-lm"]
+            exec_cmd_list = ["./out"]
+        elif lang == "cpp":
+            compile_cmd_list = ["g++", actual_filename, "-o", "out", "-lm"]
+            exec_cmd_list = ["./out"]
+        elif lang == "java":
+            compile_cmd_list = ["javac", actual_filename]
+            base_class = actual_filename[:-5]
+            exec_cmd_list = ["java", base_class]
+        elif lang == "python":
+            exec_cmd_list = ["python3", actual_filename]
+
+        # Sanitize environment to prevent exposing OCTAVE_SERVICE_SECRET
+        safe_env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin")}
+
         # Phase 1: Compile
-        if compile_cmd:
+        if compile_cmd_list:
             try:
                 comp_process = subprocess.run(
-                    compile_cmd, shell=True, cwd=temp_dir,
-                    capture_output=True, text=True, timeout=30
+                    compile_cmd_list, shell=False, cwd=temp_dir,
+                    capture_output=True, text=True, timeout=30,
+                    env=safe_env
                 )
                 compile_output = comp_process.stderr if comp_process.returncode != 0 else comp_process.stdout
                 
@@ -296,7 +321,7 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
                         "stdout": None, "stderr": None, "compile_output": compile_output,
                         "exit_status": comp_process.returncode, "execution_time": 0
                     }
-            except subprocess.TimeoutExpired as e:
+            except subprocess.TimeoutExpired:
                 return {
                     "stdout": None, "stderr": None, "compile_output": "Compilation timed out.",
                     "exit_status": 1, "execution_time": 0
@@ -310,10 +335,16 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
         # Phase 2: Execute
         start_time = time.time()
         try:
+            stdin_file = open(stdin_path, "r") if stdin_path else None
             exec_process = subprocess.run(
-                exec_cmd, shell=True, cwd=temp_dir,
-                capture_output=True, text=True, timeout=15
+                exec_cmd_list, shell=False, cwd=temp_dir,
+                stdin=stdin_file,
+                capture_output=True, text=True, timeout=15,
+                env=safe_env
             )
+            if stdin_file:
+                stdin_file.close()
+                
             execution_time = time.time() - start_time
             
             return {
@@ -324,6 +355,8 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
                 "execution_time": execution_time
             }
         except subprocess.TimeoutExpired as e:
+            if stdin_file and not stdin_file.closed:
+                stdin_file.close()
             execution_time = time.time() - start_time
             return {
                 "stdout": e.stdout.decode('utf-8') if e.stdout else None,
@@ -333,6 +366,8 @@ def execute_multi_lang(request: MultiLangRequest, token: str = Depends(verify_to
                 "execution_time": execution_time
             }
         except Exception as e:
+            if stdin_file and not stdin_file.closed:
+                stdin_file.close()
             execution_time = time.time() - start_time
             return {
                 "stdout": None,

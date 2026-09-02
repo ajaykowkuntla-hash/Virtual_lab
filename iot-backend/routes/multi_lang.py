@@ -4,8 +4,12 @@ from services.multi_lang_engine import execute_code as multi_lang_execute
 
 router = APIRouter(tags=["Code Execution"])
 
+from dependencies import get_current_user
+from models.models import User
+from fastapi import Depends
+
 @router.post("/code/execute", response_model=CodeExecuteResponse)
-async def execute_code(request: CodeExecuteRequest):
+async def execute_code(request: CodeExecuteRequest, current_user: User = Depends(get_current_user)):
     # This calls the custom Docker-based multi-language engine
     result = multi_lang_execute(
         language=request.language,

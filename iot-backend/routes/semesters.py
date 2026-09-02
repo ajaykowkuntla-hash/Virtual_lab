@@ -4,16 +4,20 @@ from typing import List
 
 from models.database import get_db
 from models.models import Semester, Enrollment, AttendanceLog, User, ClassSession
-from models.schemas import SemesterCreate, SemesterResponse, StudentPromotionMap, EnrollmentResponse
+from models.schemas import SemesterResponse, SemesterCreate, StudentPromotionMap, EnrollmentResponse
+from dependencies import get_current_admin, get_current_user
 
-router = APIRouter(prefix="/semesters", tags=["Semesters"])
+router = APIRouter(
+    prefix="/semesters",
+    tags=["Semesters"]
+)
 
 @router.get("/", response_model=List[SemesterResponse])
-def list_semesters(db: Session = Depends(get_db)):
+def list_semesters(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return db.query(Semester).all()
 
 @router.post("/", response_model=SemesterResponse)
-def create_semester(data: SemesterCreate, db: Session = Depends(get_db)):
+def create_semester(data: SemesterCreate, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin)):
     semester = Semester(
         name=data.name,
         start_date=data.start_date,
@@ -26,7 +30,7 @@ def create_semester(data: SemesterCreate, db: Session = Depends(get_db)):
     return semester
 
 @router.post("/{semester_id}/activate", response_model=SemesterResponse)
-def activate_semester(semester_id: int, db: Session = Depends(get_db)):
+def activate_semester(semester_id: int, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin)):
     semester = db.query(Semester).filter(Semester.id == semester_id).first()
     if not semester:
         raise HTTPException(status_code=404, detail="Semester not found")
@@ -41,7 +45,7 @@ def activate_semester(semester_id: int, db: Session = Depends(get_db)):
     return semester
 
 @router.post("/{semester_id}/promote-students", response_model=List[EnrollmentResponse])
-def promote_students(semester_id: int, data: StudentPromotionMap, db: Session = Depends(get_db)):
+def promote_students(semester_id: int, data: StudentPromotionMap, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin)):
     semester = db.query(Semester).filter(Semester.id == semester_id).first()
     if not semester:
         raise HTTPException(status_code=404, detail="Semester not found")
@@ -71,7 +75,7 @@ def promote_students(semester_id: int, data: StudentPromotionMap, db: Session = 
     return enrollments
 
 @router.get("/{semester_id}/attendance-summary")
-def get_attendance_summary(semester_id: int, db: Session = Depends(get_db)):
+def get_attendance_summary(semester_id: int, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin)):
     semester = db.query(Semester).filter(Semester.id == semester_id).first()
     if not semester:
         raise HTTPException(status_code=404, detail="Semester not found")
