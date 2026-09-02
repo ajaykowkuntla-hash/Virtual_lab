@@ -48,42 +48,61 @@ function downloadBase64Image(dataUri: string, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+interface ExperimentMetadata {
+  id: string;
+  title: string;
+  description?: string;
+  theory?: string;
+  instructions?: string;
+  starter_code?: string;
+  language?: string;
+  lab_type: string;
+}
+
 export const VirtualLab: React.FC = () => {
   const { experimentId } = useParams<{ experimentId: string }>();
   const { user } = useAuth();
   
-  const defaultScript = `% Generate and analyze a mixed signal
-fs = 1000; % Sampling frequency
-L = 1000; % Length of signal
-t = (0:L-1)*(1/fs); % Time vector
-
-% Signal components
-f1 = 50; % Hz
-f2 = 120; % Hz
-x = 0.7*sin(2*pi*f1*t) + sin(2*pi*f2*t);
-
-% Add some noise
-y = x + 2*randn(size(t));
-
-% Compute FFT
-Y = fft(y);
-P2 = abs(Y/L);
-
-% Generate plot
-figure('visible', 'off');
-plot(t, y);
-title('Noisy Time Domain Signal');
-xlabel('t (seconds)');
-ylabel('X(t)');`;
-  
-  const [scriptText, setScriptText] = useState(() => {
-    const saved = localStorage.getItem(`lab_draft_v2_${experimentId}`);
-    return saved !== null ? saved : defaultScript;
-  });
+  const [scriptText, setScriptText] = useState("");
+  const [experiment, setExperiment] = useState<ExperimentMetadata | null>(null);
+  const [isExperimentLoading, setIsExperimentLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem(`lab_draft_v2_${experimentId}`, scriptText);
-  }, [scriptText, experimentId]);
+    const fetchExperiment = async () => {
+      if (!experimentId) return;
+      try {
+        const response = await apiClient.get(`/lab/experiments/${experimentId}`);
+        setExperiment(response.data);
+        
+        // Load saved draft or starter code
+        const saved = localStorage.getItem(`lab_draft_v2_${experimentId}`);
+        if (saved !== null) {
+          setScriptText(saved);
+        } else if (response.data.starter_code) {
+          setScriptText(response.data.starter_code);
+        }
+        
+        if (response.data.language === 'octave') {
+          setEnvironment('matlab');
+        } else if (response.data.language === 'python' || response.data.language === 'cpp' || response.data.language === 'c' || response.data.language === 'java') {
+          setEnvironment('python');
+        } else if (response.data.language === 'circuit') {
+          setEnvironment('iot');
+        }
+      } catch (err) {
+        console.error("Failed to load experiment:", err);
+      } finally {
+        setIsExperimentLoading(false);
+      }
+    };
+    fetchExperiment();
+  }, [experimentId]);
+
+  useEffect(() => {
+    if (scriptText && !isExperimentLoading) {
+      localStorage.setItem(`lab_draft_v2_${experimentId}`, scriptText);
+    }
+  }, [scriptText, experimentId, isExperimentLoading]);
 
   // Execution state
   const [executionStatus, setExecutionStatus] = useState<ExecutionStatus>('ready');
@@ -177,7 +196,7 @@ ylabel('X(t)');`;
     try {
       const response = await apiClient.post<ExecutionResult>('/lab/submit', {
         user_id: parseInt(user.id),
-        experiment_id: experimentId || 'exp_1_dsp',
+        experiment_id: experimentId || '',
         script_text: scriptText,
         stdin: stdinText
       });
@@ -278,7 +297,7 @@ ylabel('X(t)');`;
       <span className="material-symbols-outlined text-[16px]">chevron_right</span>
       <Link to="/assignments" className="hover:text-primary transition-colors">Assignments</Link>
       <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-      <span className="text-primary font-medium">{experimentId}</span>
+      <span className="text-primary font-medium">{experiment?.title || experimentId}</span>
     </div>
   );
 
@@ -391,8 +410,24 @@ ylabel('X(t)');`;
                   <div className="h-full flex items-center gap-2 px-4 border-b-2 border-neural-blue bg-[#252526] text-[#d4d4d4] text-xs font-mono cursor-pointer">
                     <span className="text-neural-blue font-bold">&lt;&gt;</span> main.m
                   </div>
-                  <div className="h-full flex items-center px-4 text-[#888] hover:text-[#d4d4d4] text-xs font-mono cursor-pointer transition-colors">
+                  <div className="h-full flex items-center px-4 text-[#888] hover:text-[#d4d4d4] text-xs font-mono cursor-pointer transition-colors relative group">
                     Instructions
+                    {(experiment?.instructions || experiment?.theory) && (
+                      <div className="absolute top-full left-0 mt-1 w-96 bg-[#252526] border border-[#333] shadow-2xl rounded-lg p-4 z-50 hidden group-hover:block max-h-[400px] overflow-y-auto">
+                        {experiment.theory && (
+                          <div className="mb-4">
+                            <h4 className="text-neural-blue font-bold mb-2">Theory</h4>
+                            <p className="text-xs text-[#d4d4d4] whitespace-pre-wrap">{experiment.theory}</p>
+                          </div>
+                        )}
+                        {experiment.instructions && (
+                          <div>
+                            <h4 className="text-neural-blue font-bold mb-2">Instructions</h4>
+                            <p className="text-xs text-[#d4d4d4] whitespace-pre-wrap">{experiment.instructions}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -695,7 +730,7 @@ ylabel('X(t)');`;
       )}
 
       {environment === 'python' && (
-        <MultiLangIDE onReturn={() => setEnvironment('selection')} />
+        <MultiLangIDE onReturn={() => setEnvironment('selection')} experimentId={experimentId} />
       )}
 
       {environment === 'iot' && (

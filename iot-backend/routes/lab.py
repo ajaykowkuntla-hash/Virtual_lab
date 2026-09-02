@@ -5,7 +5,7 @@ import json
 
 from models.database import get_db
 from models.models import User, LabSubmission, Experiment, Semester, Lab, Course, FacultyAssignment
-from models.schemas import LabSubmitRequest, LabSubmitResponse, LabSubmissionResponse, LabVerifyRequest, ExperimentCreate, ExperimentResponse, CodeExecuteRequest, CodeExecuteResponse, LabResponse, CourseResponse, OctaveError
+from models.schemas import LabSubmitRequest, LabSubmitResponse, LabSubmissionResponse, LabVerifyRequest, ExperimentCreate, ExperimentResponse, CodeExecuteRequest, CodeExecuteResponse, LabResponse, CourseResponse, OctaveError, FacultySubmissionResponse
 from services.lab_engine import execute_octave_script
 from services.multi_lang_engine import execute_code as multi_lang_execute
 from dependencies import get_current_faculty, get_current_faculty_or_admin
@@ -194,10 +194,46 @@ def verify_submission(
             raise HTTPException(status_code=403, detail="You are not assigned to this lab/experiment.")
             
     submission.status = data.status
+    if data.numeric_grade is not None:
+        submission.numeric_grade = data.numeric_grade
+    if data.faculty_remarks is not None:
+        submission.faculty_remarks = data.faculty_remarks
     submission.verified_by = current_user.id
     db.commit()
     db.refresh(submission)
     return submission
+
+@router.get("/student/submissions", response_model=List[LabSubmissionResponse])
+def get_student_submissions(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if current_user.role != "student":
+        raise HTTPException(status_code=403, detail="Only students can access this endpoint")
+    submissions = db.query(LabSubmission).filter(LabSubmission.user_id == current_user.id).order_by(LabSubmission.submitted_at.desc()).all()
+    return submissions
+
+@router.get("/faculty/submissions", response_model=List[FacultySubmissionResponse])
+def get_faculty_all_submissions(db: Session = Depends(get_db), current_user: User = Depends(get_current_faculty)):
+    assignments = db.query(FacultyAssignment).filter(FacultyAssignment.faculty_id == current_user.id).all()
+    assigned_lab_ids = [a.lab_id for a in assignments if a.lab_id is not None]
+    
+    submissions = db.query(LabSubmission).join(Experiment).filter(Experiment.lab_id.in_(assigned_lab_ids)).order_by(LabSubmission.submitted_at.desc()).all()
+    
+    response = []
+    for sub in submissions:
+        student = db.query(User).filter(User.id == sub.user_id).first()
+        experiment = db.query(Experiment).filter(Experiment.id == sub.experiment_id).first()
+        lab = db.query(Lab).filter(Lab.id == experiment.lab_id).first() if experiment else None
+        
+        response.append(FacultySubmissionResponse(
+            id=sub.id,
+            student_name=student.name if student else "Unknown",
+            experiment_id=sub.experiment_id,
+            experiment_title=experiment.title if experiment else sub.experiment_id,
+            lab_name=lab.name if lab else "Unknown Lab",
+            status=sub.status,
+            submitted_at=sub.submitted_at,
+            numeric_grade=sub.numeric_grade
+        ))
+    return response
 
 
 
@@ -233,6 +269,7 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
             "my_labs_count": 0,
             "pending_assignments_count": 0,
             "attendance_rate": "0%",
+            "average_grade": "N/A",
             "recent_grades": [],
             "upcoming_events": [],
             "experiments": []
@@ -252,13 +289,22 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
     total_logs = db.query(AttendanceLog).filter(AttendanceLog.user_id == current_user.id).count()
     attendance_rate = "95%" if total_logs > 0 else "0%"
     
+    graded_subs = [s for s in submissions if s.numeric_grade is not None]
+    if graded_subs:
+        avg_grade = sum(s.numeric_grade for s in graded_subs) / len(graded_subs)
+        average_grade = f"{avg_grade:.1f}"
+    else:
+        average_grade = "N/A"
+    
     recent_grades = []
     for sub in submissions[:3]:
         exp = db.query(Experiment).filter(Experiment.id == sub.experiment_id).first()
         recent_grades.append({
             "experiment_title": exp.title if exp else sub.experiment_id,
             "status": sub.status,
-            "submitted_at": sub.submitted_at.strftime("%b %d, %H:%M")
+            "submitted_at": sub.submitted_at.strftime("%b %d, %H:%M"),
+            "numeric_grade": sub.numeric_grade,
+            "faculty_remarks": sub.faculty_remarks
         })
         
     upcoming_events = db.query(CalendarEvent).filter(
@@ -280,6 +326,7 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
         "my_labs_count": my_labs_count,
         "pending_assignments_count": pending_assignments_count,
         "attendance_rate": attendance_rate,
+        "average_grade": average_grade,
         "recent_grades": recent_grades,
         "upcoming_events": events_list,
         "experiments": [{"id": e.id, "title": e.title, "description": e.description} for e in experiments]

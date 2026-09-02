@@ -118,27 +118,7 @@ export const Profile: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Stats Mock */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-neural-blue/10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-neural-blue">emoji_events</span>
-              </div>
-              <div>
-                <p className="text-secondary font-label-caps text-label-caps">Total Points</p>
-                <p className="text-h3 font-semibold text-primary">1,450</p>
-              </div>
-            </div>
-            <div className="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-success-emerald/10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-success-emerald">verified</span>
-              </div>
-              <div>
-                <p className="text-secondary font-label-caps text-label-caps">Labs Completed</p>
-                <p className="text-h3 font-semibold text-primary">8</p>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
 

@@ -60,12 +60,29 @@ class LabSubmissionResponse(BaseModel):
     status: str
     verified_by: Optional[int]
     submitted_at: datetime
+    numeric_grade: Optional[int] = None
+    faculty_remarks: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class FacultySubmissionResponse(BaseModel):
+    id: int
+    student_name: str
+    experiment_id: str
+    experiment_title: str
+    lab_name: str
+    status: str
+    submitted_at: datetime
+    numeric_grade: Optional[int] = None
 
     class Config:
         from_attributes = True
 
 class LabVerifyRequest(BaseModel):
     status: Literal["verified", "rejected"]
+    numeric_grade: Optional[int] = None
+    faculty_remarks: Optional[str] = None
 
 class AccessLogResponse(BaseModel):
     id: int
@@ -106,6 +123,10 @@ class ExperimentResponse(BaseModel):
     created_at: datetime
     assigned_faculty_id: Optional[int]
     lab_id: Optional[int]
+    theory: Optional[str] = None
+    instructions: Optional[str] = None
+    starter_code: Optional[str] = None
+    language: Optional[str] = None
 
     class Config:
         from_attributes = True

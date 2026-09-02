@@ -80,6 +80,10 @@ class Experiment(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     assigned_faculty_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=True)
+    theory = Column(Text, nullable=True)
+    instructions = Column(Text, nullable=True)
+    starter_code = Column(Text, nullable=True)
+    language = Column(String, nullable=True)
 
     submissions = relationship("LabSubmission", back_populates="experiment_ref")
     faculty_owner = relationship("User")
@@ -99,6 +103,8 @@ class LabSubmission(Base):
     status = Column(String, default="pending") # pending, verified, failed
     verified_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     submitted_at = Column(DateTime, default=datetime.utcnow)
+    numeric_grade = Column(Integer, nullable=True)
+    faculty_remarks = Column(Text, nullable=True)
 
     # Relationships
     student = relationship("User", foreign_keys=[user_id], back_populates="lab_submissions")

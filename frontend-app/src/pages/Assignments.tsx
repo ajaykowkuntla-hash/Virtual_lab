@@ -1,15 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../api/client';
+
+interface Experiment {
+  id: string;
+  title: string;
+  description: string;
+  lab_id: number;
+}
+
+interface Submission {
+  id: number;
+  experiment_id: string;
+  status: string;
+  submitted_at: string;
+  numeric_grade: number | null;
+  faculty_remarks: string | null;
+}
 
 export const Assignments: React.FC = () => {
   const navigate = useNavigate();
-  
-  const assignmentsData = [
-    { id: 'LAB-1', title: 'DSP Lab 1: Signal Generation', course: 'Digital Signal Processing', dueDate: 'Oct 14, 11:59 PM', status: 'Pending', type: 'Lab' },
-    { id: 'LAB-2', title: 'IoT Basics: Sensor Reading', course: 'IoT Architecture', dueDate: 'Oct 16, 11:59 PM', status: 'In Progress', type: 'Lab' },
-    { id: 'HW-1', title: 'Filter Design Theory', course: 'Digital Signal Processing', dueDate: 'Oct 10, 11:59 PM', status: 'Completed', type: 'Assignment' }
-  ];
+  const [experiments, setExperiments] = useState<Experiment[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [expRes, subRes] = await Promise.all([
+          apiClient.get('/lab/experiments'),
+          apiClient.get('/lab/student/submissions')
+        ]);
+        setExperiments(expRes.data);
+        setSubmissions(subRes.data);
+      } catch (error) {
+        console.error("Failed to load assignments", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const getStatus = (expId: string) => {
+    const sub = submissions.find(s => s.experiment_id === expId);
+    if (!sub) return 'Pending';
+    return sub.status;
+  };
+
+  const pending = experiments.filter(e => getStatus(e.id) === 'Pending');
+  // Submissions with PENDING_REVIEW or anything else that is not completely graded (though verified/rejected might be considered done)
+  const inProgress = experiments.filter(e => getStatus(e.id) === 'PENDING_REVIEW');
+  const completed = experiments.filter(e => ['verified', 'rejected'].includes(getStatus(e.id)));
 
   return (
     <Layout role="student">
@@ -28,20 +71,23 @@ export const Assignments: React.FC = () => {
             To Do
           </h3>
           <div className="space-y-4">
-            {assignmentsData.filter(a => a.status === 'Pending').map(task => (
-              <div key={task.id} className="bg-surface-container p-4 rounded-2xl border border-border-subtle shadow-sm hover:border-primary/30 transition-colors cursor-pointer" onClick={() => navigate('/lab/exp_1_dsp')}>
+            {pending.map(task => (
+              <div key={task.id} className="bg-surface-container p-4 rounded-2xl border border-border-subtle shadow-sm hover:border-primary/30 transition-colors cursor-pointer" onClick={() => navigate(`/virtual-lab/${task.id}`)}>
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs font-mono-metrics font-bold text-secondary">{task.id}</span>
-                  <span className="px-2 py-1 rounded bg-neural-blue/10 text-neural-blue text-[10px] font-bold uppercase tracking-wider">{task.type}</span>
+                  <span className="px-2 py-1 rounded bg-neural-blue/10 text-neural-blue text-[10px] font-bold uppercase tracking-wider">Lab</span>
                 </div>
                 <h4 className="font-body-md font-semibold text-primary mb-1">{task.title}</h4>
-                <p className="text-xs text-secondary mb-4">{task.course}</p>
+                <p className="text-xs text-secondary mb-4">{task.description}</p>
                 <div className="flex items-center gap-1 text-warning-amber text-xs font-bold">
                   <span className="material-symbols-outlined text-[14px]">timer</span>
-                  Due {task.dueDate}
+                  Action Required
                 </div>
               </div>
             ))}
+            {pending.length === 0 && !isLoading && (
+              <p className="text-sm text-secondary">No pending assignments.</p>
+            )}
           </div>
         </div>
 
@@ -52,23 +98,26 @@ export const Assignments: React.FC = () => {
             In Progress
           </h3>
           <div className="space-y-4">
-            {assignmentsData.filter(a => a.status === 'In Progress').map(task => (
-              <div key={task.id} className="bg-surface-container p-4 rounded-2xl border border-border-subtle shadow-sm hover:border-primary/30 transition-colors cursor-pointer" onClick={() => navigate('/lab/exp_1_dsp')}>
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-mono-metrics font-bold text-secondary">{task.id}</span>
-                  <span className="px-2 py-1 rounded bg-neural-blue/10 text-neural-blue text-[10px] font-bold uppercase tracking-wider">{task.type}</span>
+            {inProgress.map(task => {
+              const sub = submissions.find(s => s.experiment_id === task.id);
+              return (
+                <div key={task.id} className="bg-surface-container p-4 rounded-2xl border border-border-subtle shadow-sm hover:border-primary/30 transition-colors cursor-pointer" onClick={() => navigate(`/virtual-lab/${task.id}`)}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-mono-metrics font-bold text-secondary">{task.id}</span>
+                    <span className="px-2 py-1 rounded bg-neural-blue/10 text-neural-blue text-[10px] font-bold uppercase tracking-wider">Submitted</span>
+                  </div>
+                  <h4 className="font-body-md font-semibold text-primary mb-1">{task.title}</h4>
+                  <p className="text-xs text-secondary mb-4">{task.description}</p>
+                  <div className="flex justify-between items-center text-xs text-secondary">
+                    <span className="text-neural-blue font-semibold">Pending Faculty Review</span>
+                    <span>{new Date(sub?.submitted_at || '').toLocaleDateString()}</span>
+                  </div>
                 </div>
-                <h4 className="font-body-md font-semibold text-primary mb-1">{task.title}</h4>
-                <p className="text-xs text-secondary mb-4">{task.course}</p>
-                <div className="w-full h-2 bg-background rounded-full mb-2 overflow-hidden border border-border-subtle">
-                  <div className="h-full bg-neural-blue rounded-full w-[45%]"></div>
-                </div>
-                <div className="flex justify-between items-center text-xs text-secondary">
-                  <span>45% Complete</span>
-                  <span>Due {task.dueDate.split(',')[0]}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
+            {inProgress.length === 0 && !isLoading && (
+              <p className="text-sm text-secondary">No assignments pending review.</p>
+            )}
           </div>
         </div>
 
@@ -79,16 +128,27 @@ export const Assignments: React.FC = () => {
             Completed
           </h3>
           <div className="space-y-4">
-            {assignmentsData.filter(a => a.status === 'Completed').map(task => (
-              <div key={task.id} className="bg-surface-container/50 p-4 rounded-2xl border border-border-subtle shadow-sm">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-mono-metrics font-bold text-secondary">{task.id}</span>
-                  <span className="px-2 py-1 rounded bg-success-emerald/10 text-success-emerald text-[10px] font-bold uppercase tracking-wider">Done</span>
+            {completed.map(task => {
+              const sub = submissions.find(s => s.experiment_id === task.id);
+              const isVerified = sub?.status === 'verified';
+              return (
+                <div key={task.id} className="bg-surface-container/50 p-4 rounded-2xl border border-border-subtle shadow-sm cursor-pointer hover:bg-surface-container transition-colors" onClick={() => navigate(`/virtual-lab/${task.id}`)}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-mono-metrics font-bold text-secondary">{task.id}</span>
+                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${isVerified ? 'bg-success-emerald/10 text-success-emerald' : 'bg-error/10 text-error'}`}>
+                      {isVerified ? 'Verified' : 'Rejected'}
+                    </span>
+                  </div>
+                  <h4 className="font-body-md font-semibold text-primary/70 mb-1">{task.title}</h4>
+                  <div className="mt-3 text-sm">
+                    {sub?.numeric_grade !== null && <div className="font-bold">Grade: <span className={isVerified ? 'text-success-emerald' : 'text-error'}>{sub?.numeric_grade}/100</span></div>}
+                  </div>
                 </div>
-                <h4 className="font-body-md font-semibold text-primary/70 mb-1 line-through">{task.title}</h4>
-                <p className="text-xs text-secondary/70">{task.course}</p>
-              </div>
-            ))}
+              );
+            })}
+            {completed.length === 0 && !isLoading && (
+              <p className="text-sm text-secondary">No completed assignments.</p>
+            )}
           </div>
         </div>
       </div>

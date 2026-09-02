@@ -12,6 +12,7 @@ export const StudentDashboard: React.FC = () => {
     my_labs_count: 0,
     pending_assignments_count: 0,
     attendance_rate: '0%',
+    average_grade: 'N/A',
     recent_grades: [],
     upcoming_events: [],
     experiments: []
@@ -92,7 +93,7 @@ export const StudentDashboard: React.FC = () => {
         <StatCard
           icon="star"
           iconColor="text-neural-purple"
-          value="A-"
+          value={dashboardData.average_grade}
           label="Avg Grade"
           staggerIndex={5}
         />

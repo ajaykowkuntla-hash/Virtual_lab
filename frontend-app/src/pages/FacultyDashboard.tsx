@@ -42,7 +42,7 @@ export const FacultyDashboard: React.FC = () => {
   const fetchSubmissions = async () => {
     try {
       setIsLoading(true);
-      const response = await apiClient.get('/lab/submissions/exp_1_dsp');
+      const response = await apiClient.get('/lab/faculty/submissions');
       setSubmissions(response.data);
     } catch (error) {
       console.error("Failed to fetch submissions", error);
@@ -112,17 +112,17 @@ export const FacultyDashboard: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <span className="px-2 py-1 bg-neural-blue/10 rounded-full font-mono-metrics text-mono-metrics text-neural-blue">LIVE SESSION</span>
-                  <span className="px-2 py-1 bg-surface-container-high rounded-full font-mono-metrics text-mono-metrics text-secondary">exp_1_dsp</span>
+                  <span className="px-2 py-1 bg-surface-container-high rounded-full font-mono-metrics text-mono-metrics text-secondary">all_labs</span>
                 </div>
-                <h3 className="text-h3 font-semibold text-primary">DSP Lab 1: Sine Wave</h3>
-                <p className="font-body-md text-secondary max-w-md">Experiment is actively available for online compilation, grading, and automated verification.</p>
+                <h3 className="text-h3 font-semibold text-primary">Active Experiments</h3>
+                <p className="font-body-md text-secondary max-w-md">Experiments are actively available for online compilation, grading, and automated verification.</p>
               </div>
               <button 
-                onClick={() => navigate('/lab/exp_1_dsp')}
+                onClick={() => navigate('/submissions')}
                 className="shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all shadow-xl shadow-black/10"
               >
                 <span className="material-symbols-outlined text-[18px]">visibility</span>
-                <span className="font-label-caps text-label-caps font-bold">Monitor Session</span>
+                <span className="font-label-caps text-label-caps font-bold">Monitor Submissions</span>
               </button>
             </div>
           </div>
@@ -188,14 +188,14 @@ export const FacultyDashboard: React.FC = () => {
 
       <section className="space-y-6 fade-in-up stagger-9 pb-12">
         <h4 className="font-label-caps text-label-caps text-primary flex items-center gap-2 uppercase tracking-widest border-b border-border-subtle pb-4">
-          <span className="material-symbols-outlined text-[18px]">table_chart</span> Live Lab Submissions (exp_1_dsp)
+          <span className="material-symbols-outlined text-[18px]">table_chart</span> Recent Lab Submissions
         </h4>
         
         <div className="border border-border-subtle rounded-[20px] overflow-hidden shadow-sm bg-card-bg">
           {isLoading ? (
             <div className="p-8 text-center text-secondary font-body-md">Loading submissions...</div>
           ) : submissions.length === 0 ? (
-            <div className="p-8 text-center text-secondary font-body-md">No submissions yet for this experiment.</div>
+            <div className="p-8 text-center text-secondary font-body-md">No submissions found.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -203,52 +203,38 @@ export const FacultyDashboard: React.FC = () => {
                   <tr>
                     <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Status</th>
                     <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Student</th>
+                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Experiment</th>
                     <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider whitespace-nowrap">Submitted</th>
-                    <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider w-1/3">Output</th>
                     <th className="py-4 px-6 font-label-caps text-[10px] uppercase text-secondary font-semibold tracking-wider text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-subtle">
-                  {submissions.map((sub) => (
+                  {submissions.slice(0, 5).map((sub) => (
                     <tr key={sub.id} className="hover:bg-surface-container-low/30 transition-colors">
                       <td className="py-4 px-6 align-middle">
                         <div className="flex items-center gap-2">
-                          <div className={`w-2.5 h-2.5 rounded-full ${sub.status === 'verified' ? 'bg-success-emerald' : sub.status === 'failed' ? 'bg-error' : 'bg-neural-blue'}`}></div>
-                          <span className="text-xs font-semibold capitalize text-primary">{sub.status || 'Pending'}</span>
+                          <div className={`w-2.5 h-2.5 rounded-full ${sub.status === 'verified' ? 'bg-success-emerald' : sub.status === 'rejected' ? 'bg-error' : 'bg-neural-blue'}`}></div>
+                          <span className="text-xs font-semibold capitalize text-primary">{sub.status === 'PENDING_REVIEW' ? 'Pending Review' : sub.status}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6 align-middle">
-                        <span className="font-body-md font-semibold text-primary">Student {sub.user_id}</span>
+                        <span className="font-body-md font-semibold text-primary">{sub.student_name}</span>
+                      </td>
+                      <td className="py-4 px-6 align-middle">
+                        <span className="font-body-md text-secondary">{sub.experiment_title}</span>
                       </td>
                       <td className="py-4 px-6 align-middle whitespace-nowrap">
                         <span className="font-mono-metrics text-[11px] text-secondary">
                           {new Date(sub.submitted_at).toLocaleString()}
                         </span>
                       </td>
-                      <td className="py-4 px-6 align-middle max-w-sm truncate">
-                        <code className="text-[11px] text-on-surface-variant font-mono-metrics">
-                          {sub.output ? (sub.output.length > 50 ? sub.output.substring(0, 50) + '...' : sub.output) : 'No output'}
-                        </code>
-                      </td>
                       <td className="py-4 px-6 align-middle text-right whitespace-nowrap">
-                        {sub.status === 'pending' || !sub.status ? (
-                          <div className="flex justify-end gap-2">
-                            <button 
-                              onClick={() => handleVerify(sub.id, 'verified')}
-                              className="px-3 py-1.5 rounded-lg border border-success-emerald/30 text-success-emerald hover:bg-success-emerald hover:text-white font-label-caps text-[10px] transition-colors"
-                            >
-                              Approve
-                            </button>
-                            <button 
-                              onClick={() => handleVerify(sub.id, 'rejected')}
-                              className="px-3 py-1.5 rounded-lg border border-error/30 text-error hover:bg-error hover:text-white font-label-caps text-[10px] transition-colors"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-[11px] font-semibold text-secondary uppercase tracking-wider capitalize">{sub.status}</span>
-                        )}
+                        <button 
+                          onClick={() => navigate('/submissions')}
+                          className="px-3 py-1.5 rounded-lg border border-border-subtle text-secondary hover:bg-surface-container hover:text-primary font-label-caps text-[10px] transition-colors"
+                        >
+                          View All
+                        </button>
                       </td>
                     </tr>
                   ))}

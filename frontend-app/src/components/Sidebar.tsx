@@ -164,16 +164,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollap
 
         {!isAdmin && (
           <>
-            <NavLink 
-              to={isFaculty ? "/manage-labs" : "/lab/exp_1_dsp"} 
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-4 py-3 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
-              } 
-              title={isFaculty ? 'Manage Labs' : 'Virtual Lab'}
-            >
-              <span className="material-symbols-outlined">science</span>
-              {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">{isFaculty ? 'Manage Labs' : 'Virtual Lab'}</span>}
-            </NavLink>
+            {isFaculty && (
+              <NavLink 
+                to="/manage-labs" 
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-4 py-3 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
+                } 
+                title="Manage Labs"
+              >
+                <span className="material-symbols-outlined">science</span>
+                {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">Manage Labs</span>}
+              </NavLink>
+            )}
             <NavLink 
               to={isFaculty ? "/submissions" : "/assignments"} 
               className={({ isActive }) => 
