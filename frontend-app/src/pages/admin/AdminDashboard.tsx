@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Layout } from '../../components/Layout';
 import { StatCard } from '../../components/StatCard';
 import { apiClient } from '../../api/client';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
 
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -12,7 +13,7 @@ export const AdminDashboard: React.FC = () => {
     const fetchAnalytics = async () => {
       try {
         setIsLoading(true);
-        const response = await apiClient.get('/admin/analytics');
+        const response = await apiClient.get('/analytics/admin');
         setStats(response.data);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch analytics');
@@ -45,53 +46,103 @@ export const AdminDashboard: React.FC = () => {
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : stats ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in-up stagger-2">
-          <StatCard
-            label="Total Students"
-            value={stats.total_students}
-            icon="school"
-            iconColor="text-neural-blue"
-            staggerIndex={2}
-          />
-          <StatCard
-            label="Total Faculty"
-            value={stats.total_faculty}
-            icon="supervisor_account"
-            iconColor="text-neural-pink"
-            staggerIndex={3}
-          />
-          <StatCard
-            label="Active Labs"
-            value={stats.total_labs}
-            icon="science"
-            iconColor="text-success-emerald"
-            staggerIndex={4}
-          />
-          <StatCard
-            label="Total Submissions"
-            value={stats.total_submissions}
-            icon="assignment_turned_in"
-            iconColor="text-neural-purple"
-            staggerIndex={5}
-          />
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in-up stagger-2">
+            <StatCard
+              label="Total Students"
+              value={stats.summary.total_students || 0}
+              icon="school"
+              iconColor="text-neural-blue"
+              staggerIndex={2}
+            />
+            <StatCard
+              label="Total Faculty"
+              value={stats.summary.total_faculty || 0}
+              icon="supervisor_account"
+              iconColor="text-neural-pink"
+              staggerIndex={3}
+            />
+            <StatCard
+              label="Active Labs"
+              value={stats.summary.total_labs || 0}
+              icon="science"
+              iconColor="text-success-emerald"
+              staggerIndex={4}
+            />
+            <StatCard
+              label="Total Submissions"
+              value={stats.summary.total_submissions || 0}
+              icon="assignment_turned_in"
+              iconColor="text-neural-purple"
+              staggerIndex={5}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 fade-in-up stagger-3">
+            {/* Grade Distribution */}
+            <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-lg flex flex-col h-[400px]">
+              <h3 className="font-h3 text-primary mb-6">Institution Grade Distribution</h3>
+              {stats.grade_distribution && stats.grade_distribution.length > 0 && stats.grade_distribution.some((d: any) => d.count > 0) ? (
+                <div className="flex-1 min-h-0 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stats.grade_distribution}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                      <XAxis dataKey="range" tick={{fill: '#6b7280'}} axisLine={false} tickLine={false} />
+                      <YAxis allowDecimals={false} tick={{fill: '#6b7280'}} axisLine={false} tickLine={false} />
+                      <Tooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                      <Bar dataKey="count" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
+                  <span className="material-symbols-outlined text-[48px] text-secondary mb-2">bar_chart</span>
+                  <p className="text-secondary font-body-md">No graded submissions available yet.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Submissions Over Time */}
+            <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-lg flex flex-col h-[400px]">
+              <h3 className="font-h3 text-primary mb-6">Submissions Over Time</h3>
+              {stats.submissions_over_time && stats.submissions_over_time.length > 0 ? (
+                <div className="flex-1 min-h-0 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={stats.submissions_over_time}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                      <XAxis dataKey="date" tick={{fill: '#6b7280'}} axisLine={false} tickLine={false} />
+                      <YAxis allowDecimals={false} tick={{fill: '#6b7280'}} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                      <Line type="monotone" dataKey="count" stroke="#10b981" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
+                  <span className="material-symbols-outlined text-[48px] text-secondary mb-2">trending_up</span>
+                  <p className="text-secondary font-body-md">No historical submission data available.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl fade-in-up stagger-3">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary">admin_panel_settings</span>
+              </div>
+              <div>
+                <h3 className="font-body-lg font-bold text-primary">System Status</h3>
+                <p className="text-secondary text-sm">All backend services are running normally.</p>
+              </div>
+            </div>
+            
+            <p className="text-secondary mb-4">
+              Welcome to the Institution Administration Portal. Use the sidebar to manage faculty accounts, student accounts, and laboratory assignments.
+            </p>
+          </div>
+        </>
       ) : null}
-      
-      <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl fade-in-up stagger-3">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-primary">admin_panel_settings</span>
-          </div>
-          <div>
-            <h3 className="font-body-lg font-bold text-primary">System Status</h3>
-            <p className="text-secondary text-sm">All backend services are running normally.</p>
-          </div>
-        </div>
-        
-        <p className="text-secondary mb-4">
-          Welcome to the Institution Administration Portal. Use the sidebar to manage faculty accounts, student accounts, and laboratory assignments.
-        </p>
-      </div>
     </Layout>
   );
 };

@@ -17,13 +17,18 @@ export const StudentDashboard: React.FC = () => {
     upcoming_events: [],
     experiments: []
   });
+  const [analytics, setAnalytics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
-      const res = await apiClient.get('/lab/student/dashboard');
-      setDashboardData(res.data);
+      const [dashRes, analyticsRes] = await Promise.all([
+        apiClient.get('/lab/student/dashboard'),
+        apiClient.get('/analytics/student')
+      ]);
+      setDashboardData(dashRes.data);
+      setAnalytics(analyticsRes.data);
     } catch (err) {
       console.error('Failed to load student dashboard data', err);
     } finally {
@@ -60,18 +65,18 @@ export const StudentDashboard: React.FC = () => {
         <StatCard
           icon="science"
           iconColor="text-neural-blue"
-          value={dashboardData.my_labs_count.toString()}
-          label="My Labs"
-          badge={<span className="font-mono-metrics text-mono-metrics text-secondary">Enrolled</span>}
+          value={analytics?.summary.enrolled_labs.toString() || '0'}
+          label="Enrolled Labs"
+          badge={<span className="font-mono-metrics text-mono-metrics text-secondary">Active</span>}
           staggerIndex={2}
         />
         <StatCard
           icon="assignment_late"
           iconColor="text-neural-pink"
-          value={dashboardData.pending_assignments_count.toString()}
+          value={analytics?.summary.pending_experiments.toString() || '0'}
           label="Pending Tasks"
           badge={
-            dashboardData.pending_assignments_count > 0 ? (
+            (analytics?.summary.pending_experiments || 0) > 0 ? (
               <span className="flex items-center gap-1 text-[10px] font-mono-metrics bg-error-container text-on-error-container px-2 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span> DUE SOON
               </span>
@@ -86,14 +91,14 @@ export const StudentDashboard: React.FC = () => {
         <StatCard
           icon="fact_check"
           iconColor="text-success-emerald"
-          value={dashboardData.attendance_rate}
-          label="Attendance"
+          value={analytics?.performance.completion_rate !== null ? `${analytics?.performance.completion_rate}%` : '-'}
+          label="Completion"
           staggerIndex={4}
         />
         <StatCard
           icon="star"
           iconColor="text-neural-purple"
-          value={dashboardData.average_grade}
+          value={analytics?.performance.average_grade !== null ? `${analytics?.performance.average_grade}%` : '-'}
           label="Avg Grade"
           staggerIndex={5}
         />

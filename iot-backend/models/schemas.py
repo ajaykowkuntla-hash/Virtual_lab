@@ -351,3 +351,59 @@ class CalendarEventResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Analytics Schemas
+class AnalyticsSummary(BaseModel):
+    total_students: int
+    total_faculty: int
+    total_labs: int
+    total_experiments: int
+    total_submissions: int
+
+class PerformanceMetrics(BaseModel):
+    average_grade: Optional[float]
+    completion_rate: Optional[float]
+
+class SubmissionMetrics(BaseModel):
+    pending: int
+    verified: int
+    rejected: int
+
+class GradeBucket(BaseModel):
+    range: str
+    count: int
+
+class SubmissionTrend(BaseModel):
+    date: str
+    count: int
+
+class FacultyAnalyticsSummary(BaseModel):
+    assigned_labs: int
+    assigned_students: int
+    total_submissions: int
+
+class StudentAnalyticsSummary(BaseModel):
+    enrolled_labs: int
+    available_experiments: int
+    completed_experiments: int
+    pending_experiments: int
+
+class AdminAnalyticsResponse(BaseModel):
+    summary: AnalyticsSummary
+    performance: PerformanceMetrics
+    submissions: SubmissionMetrics
+    grade_distribution: List[GradeBucket]
+    submissions_over_time: List[SubmissionTrend]
+
+class FacultyAnalyticsResponse(BaseModel):
+    summary: FacultyAnalyticsSummary
+    performance: PerformanceMetrics
+    submissions: SubmissionMetrics
+    grade_distribution: List[GradeBucket]
+    submissions_over_time: List[SubmissionTrend]
+
+class StudentAnalyticsResponse(BaseModel):
+    summary: StudentAnalyticsSummary
+    performance: PerformanceMetrics
+    submissions: SubmissionMetrics
+    grade_distribution: List[GradeBucket]

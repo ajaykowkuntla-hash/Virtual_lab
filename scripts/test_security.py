@@ -131,6 +131,29 @@ def main():
         all_passed = False
     else:
         print("Testing Unsupported Origin (http://evil.com)... ✅ PASSED (Rejected/No header)")
+        
+    print("\n[D] Analytics Scope")
+    tests_d = [
+        # Admin Analytics
+        ("Admin View Admin", "GET", "/analytics/admin", admin_token, None, 200),
+        ("Student View Admin", "GET", "/analytics/admin", student_token, None, 403),
+        ("Faculty View Admin", "GET", "/analytics/admin", faculty_vance_token, None, 403),
+        ("No Token View Admin", "GET", "/analytics/admin", None, None, 401),
+        
+        # Faculty Analytics
+        ("Faculty View Faculty", "GET", "/analytics/faculty", faculty_vance_token, None, 200),
+        ("Student View Faculty", "GET", "/analytics/faculty", student_token, None, 403),
+        ("Admin View Faculty", "GET", "/analytics/faculty", admin_token, None, 403),
+        ("No Token View Faculty", "GET", "/analytics/faculty", None, None, 401),
+        
+        # Student Analytics
+        ("Student View Student", "GET", "/analytics/student", student_token, None, 200),
+        ("Faculty View Student", "GET", "/analytics/student", faculty_vance_token, None, 403),
+        ("Admin View Student", "GET", "/analytics/student", admin_token, None, 403),
+        ("No Token View Student", "GET", "/analytics/student", None, None, 401),
+    ]
+    for t in tests_d:
+        if not test_endpoint(*t): all_passed = False
 
     if all_passed:
         print("\n🎉 ALL SECURITY TESTS PASSED")

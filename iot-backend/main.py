@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import hardware, lab, auth, semesters, faculty, admin, events, announcements
+from routes import hardware, lab, auth, semesters, faculty, admin, events, announcements, analytics
 from models.database import Base, engine
 
 app = FastAPI(title="IoT Framework Backend")
@@ -27,6 +27,7 @@ app.include_router(faculty.router)
 app.include_router(admin.router)
 app.include_router(events.router)
 app.include_router(announcements.router)
+app.include_router(analytics.router)
 
 @app.get("/health")
 def health_check():

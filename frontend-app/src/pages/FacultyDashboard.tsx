@@ -11,18 +11,26 @@ export const FacultyDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState<any>({
-    assigned_labs: 0,
-    assigned_students: 0,
-    pending_submissions: 0,
-    upcoming_events: 0,
-    recent_activity_count: 0
+    summary: {
+      assigned_labs: 0,
+      assigned_students: 0,
+      total_submissions: 0
+    },
+    submissions: {
+      pending: 0,
+      verified: 0,
+      rejected: 0
+    },
+    performance: {
+      average_grade: null
+    }
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isExperimentModalOpen, setIsExperimentModalOpen] = useState(false);
 
   const fetchAnalytics = async () => {
     try {
-      const res = await apiClient.get('/faculty/analytics');
+      const res = await apiClient.get('/analytics/faculty');
       setAnalytics(res.data);
     } catch (error) {
       console.error("Failed to fetch faculty analytics", error);
@@ -61,7 +69,7 @@ export const FacultyDashboard: React.FC = () => {
         <StatCard
           icon="science"
           iconColor="text-neural-blue"
-          value={analytics.assigned_labs.toString()}
+          value={analytics.summary.assigned_labs.toString()}
           label="Assigned Labs"
           badge={<span className="font-mono-metrics text-mono-metrics text-secondary">Active</span>}
           staggerIndex={2}
@@ -69,14 +77,14 @@ export const FacultyDashboard: React.FC = () => {
         <StatCard
           icon="groups"
           iconColor="text-success-emerald"
-          value={analytics.assigned_students.toString()}
+          value={analytics.summary.assigned_students.toString()}
           label="Assigned Students"
           staggerIndex={3}
         />
         <StatCard
           icon="fact_check"
           iconColor="text-neural-pink"
-          value={analytics.pending_submissions.toString()}
+          value={analytics.submissions.pending.toString()}
           label="Pending Submissions"
           badge={
             <span className="flex items-center gap-1 text-[10px] font-mono-metrics bg-surface-container px-2 py-1 rounded-full">
@@ -86,10 +94,10 @@ export const FacultyDashboard: React.FC = () => {
           staggerIndex={4}
         />
         <StatCard
-          icon="calendar_month"
-          iconColor="text-neural-purple"
-          value={analytics.upcoming_events.toString()}
-          label="Upcoming Events"
+          icon="grade"
+          iconColor="text-warning"
+          value={analytics.performance.average_grade !== null ? `${analytics.performance.average_grade}%` : '-'}
+          label="Average Grade"
           staggerIndex={5}
         />
       </div>
@@ -117,21 +125,12 @@ export const FacultyDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="glass-panel rounded-3xl p-8 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-7">
+          <div className="glass-panel rounded-3xl p-8 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-7 h-64 overflow-hidden">
             <div className="flex items-center justify-between">
-              <h4 className="font-label-caps text-label-caps text-primary">Class Performance Trend</h4>
+              <h4 className="font-label-caps text-label-caps text-primary">Class Grade Distribution</h4>
             </div>
-            <div className="h-56 bg-white/40 rounded-2xl border border-white/60 relative overflow-hidden flex items-end justify-between px-8 pb-4">
-              <div className="w-8 bg-surface-container-high rounded-full h-[40%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[60%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[30%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[85%]"></div>
-              <div className="w-8 bg-neural-blue/80 rounded-full h-[75%] shadow-[0_0_20px_rgba(59,130,246,0.3)]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[70%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[50%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[90%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[65%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[80%]"></div>
+            <div className="flex-1 w-full flex items-end">
+              <span className="text-secondary opacity-50 text-sm">Please visit the full Analytics page for detailed charts.</span>
             </div>
           </div>
         </div>

@@ -76,7 +76,7 @@ def main():
     }
     res, data = test("Judge0 Local Execution", "POST", "/lab/code/execute", student_token, judge0_payload)
     if not res: all_passed = False
-    elif "Hello Judge0" not in data.get("stdout", "") and "Hello Judge0" not in data.get("compile_output", ""):
+    elif "Hello Judge0" not in (data.get("stdout") or "") and "Hello Judge0" not in (data.get("compile_output") or ""):
         print(f"❌ FAILED Judge0 Output: {data}")
         all_passed = False
 
