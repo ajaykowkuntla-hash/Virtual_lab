@@ -730,7 +730,7 @@ export const VirtualLab: React.FC = () => {
       )}
 
       {environment === 'python' && (
-        <MultiLangIDE onReturn={() => setEnvironment('selection')} experimentId={experimentId} />
+        <MultiLangIDE onReturn={() => setEnvironment('selection')} />
       )}
 
       {environment === 'iot' && (

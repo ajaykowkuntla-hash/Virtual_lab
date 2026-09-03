@@ -20,16 +20,6 @@ export const FacultyDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isExperimentModalOpen, setIsExperimentModalOpen] = useState(false);
 
-  const handleVerify = async (submissionId: number, status: 'verified' | 'rejected') => {
-    try {
-      await apiClient.post(`/lab/submissions/${submissionId}/verify`, { status });
-      setSubmissions(submissions.map(s => s.id === submissionId ? { ...s, status } : s));
-      fetchAnalytics();
-    } catch (error) {
-      console.error("Failed to verify submission", error);
-    }
-  };
-
   const fetchAnalytics = async () => {
     try {
       const res = await apiClient.get('/faculty/analytics');
