@@ -5,8 +5,13 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from models.database import get_db
-from models.models import User, Experiment, LabSubmission, Department, Course, Lab, Semester, FacultyAssignment, Enrollment
-from models.schemas import UserResponse, UserCreate, UserUpdate, ExperimentCreate, ExperimentResponse, DepartmentCreate, DepartmentResponse, CourseCreate, CourseResponse, LabCreate, LabResponse
+from models.models import User, Experiment, LabSubmission, Department, Course, Lab, Semester, FacultyAssignment, Enrollment, Institution
+from models.schemas import (
+    UserResponse, UserCreate, UserUpdate, ExperimentCreate, ExperimentResponse, 
+    DepartmentCreate, DepartmentResponse, CourseCreate, CourseResponse, LabCreate, 
+    LabResponse, FacultyAssignmentResponse, EnrollmentResponse,
+    InstitutionCreate, InstitutionUpdate, InstitutionResponse
+)
 from dependencies import get_current_admin
 from security import get_password_hash
 
@@ -15,6 +20,56 @@ router = APIRouter(
     tags=["admin"],
     dependencies=[Depends(get_current_admin)]
 )
+
+@router.get("/institutions", response_model=List[InstitutionResponse])
+def list_institutions(db: Session = Depends(get_db)):
+    return db.query(Institution).all()
+
+@router.post("/institutions", response_model=InstitutionResponse)
+def create_institution(inst: InstitutionCreate, db: Session = Depends(get_db)):
+    db_inst = db.query(Institution).filter(Institution.code == inst.code).first()
+    if db_inst:
+        raise HTTPException(status_code=400, detail="Institution code already registered")
+    
+    new_inst = Institution(
+        name=inst.name,
+        code=inst.code,
+        description=inst.description,
+        status=inst.status
+    )
+    db.add(new_inst)
+    db.commit()
+    db.refresh(new_inst)
+    return new_inst
+
+@router.put("/institutions/{inst_id}", response_model=InstitutionResponse)
+def update_institution(inst_id: int, inst_update: InstitutionUpdate, db: Session = Depends(get_db)):
+    db_inst = db.query(Institution).filter(Institution.id == inst_id).first()
+    if not db_inst:
+        raise HTTPException(status_code=404, detail="Institution not found")
+        
+    if inst_update.code and inst_update.code != db_inst.code:
+        existing = db.query(Institution).filter(Institution.code == inst_update.code).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Institution code already registered")
+            
+    update_data = inst_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_inst, key, value)
+        
+    db.commit()
+    db.refresh(db_inst)
+    return db_inst
+
+@router.delete("/institutions/{inst_id}")
+def delete_institution(inst_id: int, db: Session = Depends(get_db)):
+    db_inst = db.query(Institution).filter(Institution.id == inst_id).first()
+    if not db_inst:
+        raise HTTPException(status_code=404, detail="Institution not found")
+        
+    db_inst.status = "Inactive"
+    db.commit()
+    return {"message": "Institution deactivated successfully"}
 
 @router.post("/faculty", response_model=UserResponse)
 def create_faculty(user: UserCreate, db: Session = Depends(get_db)):

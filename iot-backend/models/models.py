@@ -3,6 +3,17 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
 
+class Institution(Base):
+    __tablename__ = "institutions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    code = Column(String, unique=True, index=True)
+    description = Column(Text, nullable=True)
+    status = Column(String, default="Active")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 class User(Base):
     __tablename__ = "users"
 

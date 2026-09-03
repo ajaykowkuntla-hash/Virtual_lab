@@ -258,9 +258,32 @@ class EventResponse(BaseModel):
     location: str
     type: str
     created_by: int
-    semester_id: Optional[int]
+    semester_id: Optional[int] = None
+    
+    class ConfigDict:
+        from_attributes = True
 
-    class Config:
+class InstitutionBase(BaseModel):
+    name: str
+    code: str
+    description: Optional[str] = None
+    status: Optional[str] = "Active"
+
+class InstitutionCreate(InstitutionBase):
+    pass
+
+class InstitutionUpdate(BaseModel):
+    name: Optional[str] = None
+    code: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+
+class InstitutionResponse(InstitutionBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class ConfigDict:
         from_attributes = True
 
 class DepartmentCreate(BaseModel):

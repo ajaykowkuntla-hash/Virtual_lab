@@ -155,6 +155,21 @@ def main():
     for t in tests_d:
         if not test_endpoint(*t): all_passed = False
 
+    print("\n[E] Institution Management Scope")
+    tests_e = [
+        ("Admin View Institutions", "GET", "/admin/institutions", admin_token, None, 200),
+        ("Student View Institutions", "GET", "/admin/institutions", student_token, None, 403),
+        ("Faculty View Institutions", "GET", "/admin/institutions", faculty_vance_token, None, 403),
+        ("No Token View Institutions", "GET", "/admin/institutions", None, None, 401),
+        
+        ("Admin Create Institution", "POST", "/admin/institutions", admin_token, {"name": "Test Inst", "code": "TST"}, 200),
+        ("Student Create Institution", "POST", "/admin/institutions", student_token, {"name": "Test Inst", "code": "TST2"}, 403),
+        ("Faculty Create Institution", "POST", "/admin/institutions", faculty_vance_token, {"name": "Test Inst", "code": "TST3"}, 403),
+        ("No Token Create Institution", "POST", "/admin/institutions", None, {"name": "Test", "code": "TST4"}, 401),
+    ]
+    for t in tests_e:
+        if not test_endpoint(*t): all_passed = False
+
     if all_passed:
         print("\n🎉 ALL SECURITY TESTS PASSED")
         sys.exit(0)
