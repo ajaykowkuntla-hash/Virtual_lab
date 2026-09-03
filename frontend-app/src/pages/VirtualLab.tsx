@@ -303,7 +303,27 @@ export const VirtualLab: React.FC = () => {
 
   return (
     <Layout role="student" fullWidth={true} breadcrumbs={breadcrumbs}>
-      {environment === 'selection' && (
+      {isExperimentLoading && (
+        <div className="flex flex-col items-center justify-center h-full min-h-[60vh] space-y-4">
+          <span className="material-symbols-outlined text-[48px] animate-spin text-primary">refresh</span>
+          <p className="text-secondary font-body-lg">Loading experiment...</p>
+        </div>
+      )}
+
+      {!isExperimentLoading && !experiment && (
+        <div className="flex flex-col items-center justify-center h-full min-h-[60vh] space-y-4">
+          <span className="material-symbols-outlined text-[64px] text-error-red">error_outline</span>
+          <h2 className="text-h2 font-semibold text-primary">Experiment Not Found</h2>
+          <p className="text-secondary font-body-lg text-center max-w-md">
+            The requested experiment could not be found or you do not have permission to access it.
+          </p>
+          <button onClick={() => window.history.back()} className="mt-4 px-6 py-2 bg-primary text-white rounded-xl font-label-caps font-bold">
+            Go Back
+          </button>
+        </div>
+      )}
+
+      {!isExperimentLoading && experiment && environment === 'selection' && (
         <div className="flex flex-col h-full max-w-6xl mx-auto py-12 fade-in-up stagger-1">
           <div className="mb-12 text-center space-y-4">
             <h1 className="text-[48px] font-semibold text-primary tracking-tight leading-tight">
@@ -369,7 +389,7 @@ export const VirtualLab: React.FC = () => {
         </div>
       )}
 
-      {environment === 'matlab' && (
+      {!isExperimentLoading && experiment && environment === 'matlab' && (
         <>
           <div className="flex flex-col h-full fade-in-up stagger-1">
         
@@ -729,11 +749,11 @@ export const VirtualLab: React.FC = () => {
         </>
       )}
 
-      {environment === 'python' && (
+      {!isExperimentLoading && experiment && environment === 'python' && (
         <MultiLangIDE onReturn={() => setEnvironment('selection')} />
       )}
 
-      {environment === 'iot' && (
+      {!isExperimentLoading && experiment && environment === 'iot' && (
         <div className="flex flex-col items-center justify-center h-full fade-in-up stagger-1 space-y-6">
           <span className="material-symbols-outlined text-[64px] text-warning-amber">memory</span>
           <h2 className="text-h2 font-semibold text-primary">IoT Hardware Builder</h2>

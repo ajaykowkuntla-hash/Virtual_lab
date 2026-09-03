@@ -112,6 +112,10 @@ class ExperimentCreate(BaseModel):
     expected_output: Optional[str] = None
     tolerance: float = 0.01
     lab_id: Optional[int] = None
+    theory: Optional[str] = None
+    instructions: Optional[str] = None
+    starter_code: Optional[str] = None
+    language: Optional[str] = None
 
 class ExperimentResponse(BaseModel):
     id: str

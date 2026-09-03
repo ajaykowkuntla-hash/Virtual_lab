@@ -199,14 +199,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollap
               </NavLink>
             )}
             <NavLink 
-              to={isFaculty ? "/schedule" : "/timetable"} 
+              to="/schedule" 
               className={({ isActive }) => 
                 `flex items-center gap-3 px-4 py-3 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
               } 
-              title={isFaculty ? 'Schedule' : 'Timetable'}
+              title="Schedule"
             >
               <span className="material-symbols-outlined">calendar_today</span>
-              {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">{isFaculty ? 'Schedule' : 'Timetable'}</span>}
+              {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">Schedule</span>}
             </NavLink>
             <NavLink 
               to={isFaculty ? "/announcements" : "/updates"} 

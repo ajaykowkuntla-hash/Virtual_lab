@@ -136,17 +136,8 @@ export const StudentDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <h4 className="font-label-caps text-label-caps text-primary">Performance Trend</h4>
             </div>
-            <div className="h-56 bg-white/40 rounded-2xl border border-white/60 relative overflow-hidden flex items-end justify-between px-8 pb-4">
-              <div className="w-8 bg-surface-container-high rounded-full h-[40%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[60%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[30%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[85%]"></div>
-              <div className="w-8 bg-neural-blue/80 rounded-full h-[95%] shadow-[0_0_20px_rgba(59,130,246,0.3)]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[70%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[50%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[90%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[65%]"></div>
-              <div className="w-8 bg-surface-container-high rounded-full h-[80%]"></div>
+            <div className="h-56 bg-white/40 rounded-2xl border border-white/60 relative overflow-hidden flex items-center justify-center p-4">
+              <p className="text-secondary italic text-sm text-center">Historical data will appear here once sufficient grades are verified.</p>
             </div>
           </div>
         </div>
@@ -183,14 +174,10 @@ export const StudentDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <button onClick={() => navigate('/assignments')} className="flex flex-col items-center gap-2 p-6 glass-panel rounded-3xl hover:bg-white/50 transition-all text-secondary hover:text-primary border border-white/40">
               <span className="material-symbols-outlined text-[24px]">cloud_upload</span>
               <span className="font-label-caps text-[10px] uppercase">Upload Report</span>
-            </button>
-            <button onClick={() => navigate('/timetable')} className="flex flex-col items-center gap-2 p-6 glass-panel rounded-3xl hover:bg-white/50 transition-all text-secondary hover:text-primary border border-white/40">
-              <span className="material-symbols-outlined text-[24px]">group</span>
-              <span className="font-label-caps text-[10px] uppercase">Join Study</span>
             </button>
           </div>
         </div>

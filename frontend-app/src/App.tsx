@@ -9,7 +9,6 @@ import { Settings } from './pages/Settings'
 import { Analytics } from './pages/Analytics'
 import { Submissions } from './pages/Submissions'
 import { Schedule } from './pages/Schedule'
-import { Timetable } from './pages/Timetable'
 import { Announcements } from './pages/Announcements'
 import { Assignments } from './pages/Assignments'
 import { Helpdesk } from './pages/Helpdesk'
@@ -141,7 +140,6 @@ function App() {
 
           {/* Placeholder Routes */}
           <Route path="/assignments" element={<ProtectedRoute allowedRole="student"><Assignments /></ProtectedRoute>} />
-          <Route path="/timetable" element={<ProtectedRoute allowedRole="student"><Timetable /></ProtectedRoute>} />
           <Route path="/updates" element={<ProtectedRoute><Announcements /></ProtectedRoute>} />
           <Route path="/helpdesk" element={<ProtectedRoute allowedRole="student"><Helpdesk /></ProtectedRoute>} />
 

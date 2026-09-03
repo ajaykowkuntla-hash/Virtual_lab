@@ -144,15 +144,8 @@ export const FacultyDashboard: React.FC = () => {
               </h4>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 rounded-2xl border border-border-subtle hover:bg-white/40 transition-colors">
-                <div className="w-12 h-12 flex flex-col items-center justify-center bg-surface-container-low rounded-xl">
-                  <span className="text-[10px] font-bold text-secondary uppercase">Oct</span>
-                  <span className="text-body-lg font-bold text-primary">15</span>
-                </div>
-                <div className="flex-1">
-                  <h5 className="text-body-md font-semibold text-primary">DSP Lab Test</h5>
-                  <p className="text-[12px] text-secondary">02:00 PM - 04:00 PM</p>
-                </div>
+              <div className="p-4 text-center text-secondary border border-dashed border-border-subtle rounded-2xl">
+                No upcoming sessions
               </div>
             </div>
           </div>

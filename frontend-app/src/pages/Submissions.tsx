@@ -41,6 +41,11 @@ export const Submissions: React.FC = () => {
 
   const handleGradeSubmit = async () => {
     if (!gradingSubId) return;
+    const grade = parseInt(gradeInput);
+    if (isNaN(grade) || grade < 0 || grade > 100) {
+      alert("Grade must be a number between 0 and 100");
+      return;
+    }
     setIsSubmitting(true);
     try {
       await apiClient.post(`/lab/submissions/${gradingSubId}/verify`, {
@@ -205,7 +210,7 @@ export const Submissions: React.FC = () => {
               </button>
               <button 
                 onClick={handleGradeSubmit}
-                disabled={isSubmitting || !gradeInput}
+                disabled={isSubmitting || !gradeInput || parseInt(gradeInput) < 0 || parseInt(gradeInput) > 100}
                 className="px-4 py-2 rounded-lg bg-neural-blue text-white font-bold hover:bg-neural-blue/90 transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Grade'}

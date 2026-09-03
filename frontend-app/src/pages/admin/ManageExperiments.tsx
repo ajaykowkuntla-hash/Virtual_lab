@@ -9,6 +9,10 @@ export const ManageExperiments: React.FC = () => {
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [theory, setTheory] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [starterCode, setStarterCode] = useState('');
+  const [language, setLanguage] = useState('');
   const [labType, setLabType] = useState('matlab_execution');
   const [expectedOutput, setExpectedOutput] = useState('');
   const [tolerance, setTolerance] = useState(0.01);
@@ -49,6 +53,10 @@ export const ManageExperiments: React.FC = () => {
         id,
         title,
         description: description || undefined,
+        theory: theory || undefined,
+        instructions: instructions || undefined,
+        starter_code: starterCode || undefined,
+        language: language || undefined,
         lab_type: labType,
         expected_output: expectedOutput || undefined,
         tolerance,
@@ -57,6 +65,10 @@ export const ManageExperiments: React.FC = () => {
       setId('');
       setTitle('');
       setDescription('');
+      setTheory('');
+      setInstructions('');
+      setStarterCode('');
+      setLanguage('');
       setExpectedOutput('');
       setTolerance(0.01);
       setLabId('');
@@ -113,6 +125,45 @@ export const ManageExperiments: React.FC = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Problem statement details..."
                 className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-primary border border-border-subtle focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm h-16 resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1">Theory (Markdown)</label>
+              <textarea 
+                value={theory}
+                onChange={(e) => setTheory(e.target.value)}
+                placeholder="Educational context..."
+                className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-primary border border-border-subtle focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm h-24 resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1">Instructions</label>
+              <textarea 
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                placeholder="Step-by-step instructions..."
+                className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-primary border border-border-subtle focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm h-24 resize-none"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1">Language</label>
+                <input 
+                  type="text" 
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  placeholder="e.g. octave, python"
+                  className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-primary border border-border-subtle focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1">Starter Code</label>
+              <textarea 
+                value={starterCode}
+                onChange={(e) => setStarterCode(e.target.value)}
+                placeholder="Initial code template..."
+                className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-primary border border-border-subtle focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm font-mono-metrics h-32 resize-none"
               />
             </div>
             <div>
