@@ -73,6 +73,15 @@ def submit_lab_script(data: LabSubmitRequest, db: Session = Depends(get_db), cur
             status_code=404, 
             detail=f"Unknown experiment_id: '{data.experiment_id}'. No such experiment exists."
         )
+        
+    # Check enrollment authorization
+    from models.models import Enrollment
+    enrollment = db.query(Enrollment).filter(
+        Enrollment.student_id == user_id,
+        Enrollment.lab_id == experiment.lab_id
+    ).first()
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in the lab for this experiment.")
     
     expected_output = None
     if experiment.expected_output:
@@ -263,8 +272,8 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
     if current_user.role != "student":
         raise HTTPException(status_code=403, detail="Only students can access this endpoint")
         
-    enrollment = db.query(Enrollment).filter(Enrollment.student_id == current_user.id).first()
-    if not enrollment:
+    enrollments = db.query(Enrollment).filter(Enrollment.student_id == current_user.id).all()
+    if not enrollments:
         return {
             "my_labs_count": 0,
             "pending_assignments_count": 0,
@@ -275,14 +284,17 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
             "experiments": []
         }
         
-    my_labs_count = db.query(Lab).filter(Lab.course_id == enrollment.course_id).count()
-    experiments = db.query(Experiment).filter(Experiment.lab_id == enrollment.lab_id).all()
+    lab_ids = [e.lab_id for e in enrollments if e.lab_id]
+    course_ids = [e.course_id for e in enrollments if e.course_id]
+        
+    my_labs_count = len(lab_ids)
+    experiments = db.query(Experiment).filter(Experiment.lab_id.in_(lab_ids)).all() if lab_ids else []
     exp_ids = [e.id for e in experiments]
     
     submissions = db.query(LabSubmission).filter(
         LabSubmission.user_id == current_user.id,
         LabSubmission.experiment_id.in_(exp_ids)
-    ).all()
+    ).all() if exp_ids else []
     submitted_exp_ids = [s.experiment_id for s in submissions]
     
     pending_assignments_count = len(exp_ids) - len(submitted_exp_ids)
@@ -307,11 +319,13 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
             "faculty_remarks": sub.faculty_remarks
         })
         
-    upcoming_events = db.query(CalendarEvent).filter(
-        (CalendarEvent.target_role.in_(["all", "student"])) |
-        (CalendarEvent.lab_id == enrollment.lab_id) |
-        (CalendarEvent.course_id == enrollment.course_id)
-    ).order_by(CalendarEvent.start_time.asc()).limit(3).all()
+    upcoming_events = []
+    if lab_ids or course_ids:
+        upcoming_events = db.query(CalendarEvent).filter(
+            (CalendarEvent.target_role.in_(["all", "student"])) |
+            (CalendarEvent.lab_id.in_(lab_ids)) |
+            (CalendarEvent.course_id.in_(course_ids))
+        ).order_by(CalendarEvent.start_time.asc()).limit(3).all()
     
     events_list = []
     for ev in upcoming_events:

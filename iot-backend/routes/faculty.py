@@ -50,7 +50,17 @@ def set_faculty_assignment(
 def list_assigned_students(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if current_user.role != "faculty":
         raise HTTPException(status_code=403, detail="Only faculty can view assigned students")
-    student_ids = db.query(Enrollment.student_id).filter(Enrollment.assigned_faculty_id == current_user.id).all()
+        
+    assigned_labs = db.query(FacultyAssignment.lab_id).filter(
+        FacultyAssignment.faculty_id == current_user.id,
+        FacultyAssignment.lab_id.isnot(None)
+    ).all()
+    lab_ids = [r[0] for r in assigned_labs]
+    
+    if not lab_ids:
+        return []
+        
+    student_ids = db.query(Enrollment.student_id).filter(Enrollment.lab_id.in_(lab_ids)).distinct().all()
     id_list = [r[0] for r in student_ids]
     return db.query(User).filter(User.id.in_(id_list)).all()
 
@@ -64,9 +74,16 @@ def get_faculty_analytics(db: Session = Depends(get_db), current_user: User = De
         FacultyAssignment.lab_id != None
     ).distinct().count()
     
-    assigned_students_count = db.query(Enrollment.student_id).filter(
-        Enrollment.assigned_faculty_id == current_user.id
-    ).distinct().count()
+    assigned_students_count = 0
+    assigned_labs = db.query(FacultyAssignment.lab_id).filter(
+        FacultyAssignment.faculty_id == current_user.id,
+        FacultyAssignment.lab_id.isnot(None)
+    ).all()
+    lab_ids = [r[0] for r in assigned_labs]
+    if lab_ids:
+        assigned_students_count = db.query(Enrollment.student_id).filter(
+            Enrollment.lab_id.in_(lab_ids)
+        ).distinct().count()
     
     assigned_labs_query = db.query(FacultyAssignment.lab_id).filter(
         FacultyAssignment.faculty_id == current_user.id

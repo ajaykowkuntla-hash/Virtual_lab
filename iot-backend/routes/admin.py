@@ -350,24 +350,42 @@ def assign_student(student_id: int, data: StudentAssignmentRequest, db: Session 
     if not fa:
         raise HTTPException(status_code=400, detail="Assigned Faculty is not assigned to the selected Lab")
         
-    enrollment = db.query(Enrollment).filter(
+    # Check duplicate
+    existing_enrollment = db.query(Enrollment).filter(
         Enrollment.student_id == student_id,
-        Enrollment.semester_id == course.semester_id
+        Enrollment.lab_id == data.lab_id
     ).first()
-    
-    if enrollment:
-        enrollment.course_id = data.course_id
-        enrollment.lab_id = data.lab_id
-        enrollment.assigned_faculty_id = data.assigned_faculty_id
-    else:
-        enrollment = Enrollment(
-            student_id=student_id,
-            semester_id=course.semester_id,
-            course_id=data.course_id,
-            lab_id=data.lab_id,
-            assigned_faculty_id=data.assigned_faculty_id
-        )
-        db.add(enrollment)
+    if existing_enrollment:
+        raise HTTPException(status_code=409, detail="Student is already enrolled in this lab")
+        
+    enrollment = Enrollment(
+        student_id=student_id,
+        semester_id=course.semester_id,
+        course_id=data.course_id,
+        lab_id=data.lab_id,
+        assigned_faculty_id=data.assigned_faculty_id
+    )
+    db.add(enrollment)
         
     db.commit()
     return {"success": True, "message": "Student assignments updated successfully"}
+
+@router.delete("/enrollments/{enrollment_id}")
+def delete_enrollment(enrollment_id: int, db: Session = Depends(get_db)):
+    enrollment = db.query(Enrollment).filter(Enrollment.id == enrollment_id).first()
+    if not enrollment:
+        raise HTTPException(status_code=404, detail="Enrollment not found")
+    
+    db.delete(enrollment)
+    db.commit()
+    return {"success": True, "message": "Enrollment removed successfully"}
+
+@router.delete("/assignments/{assignment_id}")
+def delete_assignment(assignment_id: int, db: Session = Depends(get_db)):
+    assignment = db.query(FacultyAssignment).filter(FacultyAssignment.id == assignment_id).first()
+    if not assignment:
+        raise HTTPException(status_code=404, detail="Faculty assignment not found")
+    
+    db.delete(assignment)
+    db.commit()
+    return {"success": True, "message": "Faculty assignment removed successfully"}
