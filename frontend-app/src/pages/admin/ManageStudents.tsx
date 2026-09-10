@@ -94,6 +94,20 @@ export const ManageStudents: React.FC = () => {
     }
   };
 
+  const handleUnenroll = async (enrollmentId: number) => {
+    if (!window.confirm("Are you sure you want to remove this enrollment?")) return;
+    try {
+      setIsLoading(true);
+      await apiClient.delete(`/admin/enrollments/${enrollmentId}`);
+      alert('Unenrolled successfully');
+      fetchData();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to unenroll.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Helper mappings
   const getEnrollment = (studentId: number) => {
     return enrollments.find(e => e.student_id === studentId);
@@ -399,6 +413,34 @@ export const ManageStudents: React.FC = () => {
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
+            
+            {/* Existing Enrollments */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-bold text-secondary uppercase tracking-wider">Current Enrollments</h4>
+              {enrollments.filter(e => e.student_id === assigningStudent.id).length === 0 ? (
+                <p className="text-xs text-secondary italic">No active enrollments</p>
+              ) : (
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {enrollments.filter(e => e.student_id === assigningStudent.id).map(e => (
+                    <div key={e.id} className="flex justify-between items-center bg-surface-container p-2 rounded-lg text-xs">
+                      <div>
+                        <div className="font-bold">{courses.find(c => c.id === e.course_id)?.name}</div>
+                        <div className="text-secondary">{labs.find(l => l.id === e.lab_id)?.name}</div>
+                      </div>
+                      <button 
+                        onClick={() => handleUnenroll(e.id)}
+                        className="text-error hover:bg-error/10 p-1.5 rounded"
+                        title="Unenroll"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">person_remove</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-border-subtle my-4"></div>
+
             <form onSubmit={handleAssign} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-2">Select Course</label>

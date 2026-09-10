@@ -84,6 +84,20 @@ export const ManageFaculty: React.FC = () => {
     }
   };
 
+  const handleUnassign = async (assignmentId: number) => {
+    if (!window.confirm("Are you sure you want to remove this assignment?")) return;
+    try {
+      setIsLoading(true);
+      await apiClient.delete(`/admin/assignments/${assignmentId}`);
+      alert('Unassigned successfully');
+      fetchData();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to unassign.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Helper mappings
   const getFacultyAssignments = (facultyId: number) => {
     return assignments.filter(a => a.faculty_id === facultyId);
@@ -354,6 +368,34 @@ export const ManageFaculty: React.FC = () => {
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
+            
+            {/* Existing Assignments */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-bold text-secondary uppercase tracking-wider">Current Assignments</h4>
+              {assignments.filter(a => a.faculty_id === assigningFaculty.id).length === 0 ? (
+                <p className="text-xs text-secondary italic">No active assignments</p>
+              ) : (
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {assignments.filter(a => a.faculty_id === assigningFaculty.id).map(a => (
+                    <div key={a.id} className="flex justify-between items-center bg-surface-container p-2 rounded-lg text-xs">
+                      <div>
+                        <div className="font-bold">{courses.find(c => c.id === a.course_id)?.name}</div>
+                        <div className="text-secondary">{labs.find(l => l.id === a.lab_id)?.name}</div>
+                      </div>
+                      <button 
+                        onClick={() => handleUnassign(a.id)}
+                        className="text-error hover:bg-error/10 p-1.5 rounded"
+                        title="Unassign"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">person_remove</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-border-subtle my-4"></div>
+
             <form onSubmit={handleAssignLab} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-2">Select Lab</label>
