@@ -196,15 +196,15 @@ def assign_faculty_to_lab(lab_id: str, faculty_id: int, db: Session = Depends(ge
             FacultyAssignment.faculty_id == faculty_id,
             FacultyAssignment.lab_id == db_lab.id
         ).first()
-        if not existing:
-            assignment = FacultyAssignment(
-                faculty_id=faculty_id,
-                lab_id=db_lab.id,
-                course_id=db_lab.course_id,
-                semester_id=db_lab.course.semester_id
-            )
-            db.add(assignment)
-            
+        if existing:
+            raise HTTPException(status_code=409, detail="Faculty is already assigned to this Lab")
+        assignment = FacultyAssignment(
+            faculty_id=faculty_id,
+            lab_id=db_lab.id,
+            course_id=db_lab.course_id,
+            semester_id=db_lab.course.semester_id
+        )
+        db.add(assignment)
         db.query(Experiment).filter(Experiment.lab_id == db_lab.id).update({Experiment.assigned_faculty_id: faculty_id})
         db.commit()
         first_exp = db.query(Experiment).filter(Experiment.lab_id == db_lab.id).first()
@@ -223,15 +223,15 @@ def assign_faculty_to_lab(lab_id: str, faculty_id: int, db: Session = Depends(ge
             FacultyAssignment.faculty_id == faculty_id,
             FacultyAssignment.lab_id == db_exp.lab_id
         ).first()
-        if not existing:
-            assignment = FacultyAssignment(
+        if existing:
+            raise HTTPException(status_code=409, detail="Faculty is already assigned to this Lab")
+        assignment = FacultyAssignment(
                 faculty_id=faculty_id,
                 lab_id=db_exp.lab_id,
                 course_id=db_exp.lab.course_id,
                 semester_id=db_exp.lab.course.semester_id
             )
-            db.add(assignment)
-            
+        db.add(assignment)
     db.commit()
     db.refresh(db_exp)
     return db_exp
