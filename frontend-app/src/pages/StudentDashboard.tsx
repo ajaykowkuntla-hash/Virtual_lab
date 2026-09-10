@@ -15,7 +15,8 @@ export const StudentDashboard: React.FC = () => {
     average_grade: 'N/A',
     recent_grades: [],
     upcoming_events: [],
-    experiments: []
+    experiments: [],
+    labs: []
   });
   const [analytics, setAnalytics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -107,34 +108,61 @@ export const StudentDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <div className="relative group fade-in-up stagger-6">
-            <div className="absolute -inset-1 bg-gradient-to-r from-neural-blue to-neural-purple rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative glass-panel rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border border-white/60">
-              <div className="space-y-4 flex-1">
-                <div className="flex items-center gap-3">
-                  <span className="px-2 py-1 bg-neural-blue/10 rounded-full font-mono-metrics text-mono-metrics text-neural-blue">ASSIGNED LABS</span>
-                </div>
-                {dashboardData.experiments.length > 0 ? (
-                  <div>
-                    <h3 className="text-h3 font-semibold text-primary">{dashboardData.experiments[0].title}</h3>
-                    <p className="font-body-md text-secondary mt-2">{dashboardData.experiments[0].description}</p>
-                  </div>
-                ) : (
-                  <div>
-                    <h3 className="text-h3 font-semibold text-primary">No Active Labs</h3>
-                    <p className="font-body-md text-secondary mt-2">You have no active lab experiments assigned at this moment.</p>
-                  </div>
-                )}
-              </div>
-              {dashboardData.experiments.length > 0 && (
-                <button 
-                  onClick={() => navigate(`/lab/${dashboardData.experiments[0].id}`)} 
-                  className="shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all shadow-xl shadow-black/10"
-                >
-                  <span className="material-symbols-outlined text-[18px]">play_arrow</span>
-                  <span className="font-label-caps text-label-caps font-bold">Start Lab</span>
-                </button>
-              )}
+            <div className="flex justify-between items-end mb-4 px-2">
+              <h3 className="text-2xl font-bold text-primary tracking-tight">My Labs</h3>
             </div>
+            
+            {dashboardData.labs.length > 0 ? (
+              <div className="grid grid-cols-1 gap-6">
+                {dashboardData.labs.map((lab: any, idx: number) => (
+                  <div key={idx} className="relative glass-panel rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border border-white/60 hover:shadow-xl transition-all group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-neural-blue to-neural-purple rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500 -z-10"></div>
+                    
+                    <div className="space-y-4 flex-1">
+                      <div className="flex items-center gap-3">
+                        <span className="px-2 py-1 bg-neural-blue/10 rounded-full font-mono-metrics text-[10px] uppercase font-bold text-neural-blue">
+                          {lab.course}
+                        </span>
+                        {lab.semester && (
+                          <span className="px-2 py-1 bg-surface-container-high rounded-full font-mono-metrics text-[10px] uppercase font-bold text-secondary">
+                            {lab.semester}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-h3 font-semibold text-primary">{lab.name}</h3>
+                        <p className="font-body-md text-secondary mt-1">
+                          {lab.completed_experiments} of {lab.experiment_count} experiments completed. {lab.pending_experiments} pending.
+                        </p>
+                      </div>
+                      
+                      <div className="w-full bg-surface-container-high rounded-full h-2 mt-2">
+                        <div 
+                          className="bg-primary h-2 rounded-full transition-all duration-1000"
+                          style={{ width: `${lab.progress_percentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-right text-xs font-mono-metrics text-secondary">{lab.progress_percentage}%</div>
+                    </div>
+                    
+                    <button 
+                      onClick={() => navigate(`/student/labs/${lab.id}`)} 
+                      className="shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all shadow-xl shadow-black/10"
+                    >
+                      <span className="font-label-caps text-label-caps font-bold">Open Lab</span>
+                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="glass-panel rounded-3xl p-12 text-center border border-white/60">
+                <span className="material-symbols-outlined text-[48px] text-secondary opacity-50 mb-4">school</span>
+                <h3 className="text-h3 font-semibold text-primary">No Active Labs</h3>
+                <p className="font-body-md text-secondary mt-2">You are not enrolled in any labs yet.</p>
+              </div>
+            )}
           </div>
 
           <div className="glass-panel rounded-3xl p-8 shadow-lg shadow-black/5 flex flex-col gap-6 fade-in-up stagger-7">

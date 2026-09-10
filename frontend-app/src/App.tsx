@@ -4,6 +4,7 @@ import { StudentDashboard } from './pages/StudentDashboard'
 import { FacultyDashboard } from './pages/FacultyDashboard'
 import { Login } from './pages/Login'
 import { VirtualLab } from './pages/VirtualLab'
+import { LabDetails } from './pages/LabDetails'
 import { Profile } from './pages/Profile'
 import { Settings } from './pages/Settings'
 import { Analytics } from './pages/Analytics'
@@ -81,6 +82,12 @@ function App() {
           <Route path="/lab/:experimentId" element={
             <ProtectedRoute allowedRole="student">
               <VirtualLab />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/student/labs/:labId" element={
+            <ProtectedRoute allowedRole="student">
+              <LabDetails />
             </ProtectedRoute>
           } />
 

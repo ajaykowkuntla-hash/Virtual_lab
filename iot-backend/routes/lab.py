@@ -212,12 +212,30 @@ def verify_submission(
     db.refresh(submission)
     return submission
 
-@router.get("/student/submissions", response_model=List[LabSubmissionResponse])
+@router.get("/student/submissions")
 def get_student_submissions(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if current_user.role != "student":
         raise HTTPException(status_code=403, detail="Only students can access this endpoint")
     submissions = db.query(LabSubmission).filter(LabSubmission.user_id == current_user.id).order_by(LabSubmission.submitted_at.desc()).all()
-    return submissions
+    
+    response = []
+    for sub in submissions:
+        experiment = db.query(Experiment).filter(Experiment.id == sub.experiment_id).first()
+        lab = db.query(Lab).filter(Lab.id == experiment.lab_id).first() if experiment else None
+        
+        response.append({
+            "id": sub.id,
+            "experiment_id": sub.experiment_id,
+            "experiment_title": experiment.title if experiment else sub.experiment_id,
+            "lab_name": lab.name if lab else "Unknown Lab",
+            "lab_type": experiment.lab_type if experiment else "code",
+            "script_text": sub.script_text,
+            "status": "GRADED" if sub.numeric_grade is not None else "SUBMITTED",
+            "submitted_at": sub.submitted_at,
+            "numeric_grade": sub.numeric_grade,
+            "faculty_remarks": sub.faculty_remarks
+        })
+    return response
 
 @router.get("/faculty/submissions", response_model=List[FacultySubmissionResponse])
 def get_faculty_all_submissions(db: Session = Depends(get_db), current_user: User = Depends(get_current_faculty)):
@@ -281,7 +299,8 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
             "average_grade": "N/A",
             "recent_grades": [],
             "upcoming_events": [],
-            "experiments": []
+            "experiments": [],
+            "labs": []
         }
         
     lab_ids = [e.lab_id for e in enrollments if e.lab_id]
@@ -295,11 +314,12 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
         LabSubmission.user_id == current_user.id,
         LabSubmission.experiment_id.in_(exp_ids)
     ).all() if exp_ids else []
-    submitted_exp_ids = [s.experiment_id for s in submissions]
     
-    pending_assignments_count = len(exp_ids) - len(submitted_exp_ids)
-    total_logs = db.query(AttendanceLog).filter(AttendanceLog.user_id == current_user.id).count()
-    attendance_rate = "95%" if total_logs > 0 else "0%"
+    # Map unique submitted experiments
+    unique_submitted = {s.experiment_id for s in submissions}
+    pending_assignments_count = len(exp_ids) - len(unique_submitted)
+    
+    attendance_rate = "0%" # Phase 5A: Do not manufacture attendance
     
     graded_subs = [s for s in submissions if s.numeric_grade is not None]
     if graded_subs:
@@ -309,14 +329,51 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
         average_grade = "N/A"
     
     recent_grades = []
-    for sub in submissions[:3]:
-        exp = db.query(Experiment).filter(Experiment.id == sub.experiment_id).first()
+    # Sort submissions by submitted_at descending
+    sorted_subs = sorted(submissions, key=lambda s: s.submitted_at, reverse=True)
+    for sub in sorted_subs[:3]:
+        exp = next((e for e in experiments if e.id == sub.experiment_id), None)
         recent_grades.append({
             "experiment_title": exp.title if exp else sub.experiment_id,
             "status": sub.status,
             "submitted_at": sub.submitted_at.strftime("%b %d, %H:%M"),
             "numeric_grade": sub.numeric_grade,
             "faculty_remarks": sub.faculty_remarks
+        })
+        
+    # Calculate per-lab details
+    lab_details_list = []
+    for enrollment in enrollments:
+        if not enrollment.lab_id:
+            continue
+            
+        lab = db.query(Lab).filter(Lab.id == enrollment.lab_id).first()
+        if not lab:
+            continue
+            
+        course = db.query(Course).filter(Course.id == lab.course_id).first()
+        semester = db.query(Semester).filter(Semester.id == course.semester_id).first() if course else None
+        
+        lab_exps = [e for e in experiments if e.lab_id == lab.id]
+        lab_exp_ids_set = {e.id for e in lab_exps}
+        
+        lab_subs = [s for s in submissions if s.experiment_id in lab_exp_ids_set]
+        lab_unique_submitted = {s.experiment_id for s in lab_subs}
+        
+        completed_exps = len(lab_unique_submitted)
+        total_exps = len(lab_exps)
+        pending_exps = total_exps - completed_exps
+        progress = int((completed_exps / total_exps * 100)) if total_exps > 0 else 0
+        
+        lab_details_list.append({
+            "id": lab.id,
+            "name": lab.name,
+            "course": course.name if course else "Unknown",
+            "semester": semester.name if semester else None,
+            "experiment_count": total_exps,
+            "completed_experiments": completed_exps,
+            "pending_experiments": pending_exps,
+            "progress_percentage": progress
         })
         
     upcoming_events = []
@@ -343,5 +400,81 @@ def get_student_dashboard(db: Session = Depends(get_db), current_user: User = De
         "average_grade": average_grade,
         "recent_grades": recent_grades,
         "upcoming_events": events_list,
-        "experiments": [{"id": e.id, "title": e.title, "description": e.description} for e in experiments]
+        "experiments": [{"id": e.id, "title": e.title, "description": e.description} for e in experiments],
+        "labs": lab_details_list
+    }
+
+@router.get("/student/labs/{lab_id}")
+def get_student_lab_details(lab_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if current_user.role != "student":
+        raise HTTPException(status_code=403, detail="Only students can access this endpoint")
+        
+    enrollment = db.query(Enrollment).filter(
+        Enrollment.student_id == current_user.id,
+        Enrollment.lab_id == lab_id
+    ).first()
+    
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this lab")
+        
+    lab = db.query(Lab).filter(Lab.id == lab_id).first()
+    if not lab:
+        raise HTTPException(status_code=404, detail="Lab not found")
+        
+    course = db.query(Course).filter(Course.id == lab.course_id).first()
+    semester = db.query(Semester).filter(Semester.id == course.semester_id).first() if course else None
+    
+    experiments = db.query(Experiment).filter(Experiment.lab_id == lab_id).all()
+    exp_ids = [e.id for e in experiments]
+    
+    submissions = db.query(LabSubmission).filter(
+        LabSubmission.user_id == current_user.id,
+        LabSubmission.experiment_id.in_(exp_ids)
+    ).all()
+    
+    # Map latest submission per experiment
+    latest_subs = {}
+    for sub in submissions:
+        if sub.experiment_id not in latest_subs:
+            latest_subs[sub.experiment_id] = sub
+        else:
+            if sub.submitted_at > latest_subs[sub.experiment_id].submitted_at:
+                latest_subs[sub.experiment_id] = sub
+                
+    exp_list = []
+    for exp in experiments:
+        sub = latest_subs.get(exp.id)
+        if sub:
+            status = "GRADED" if sub.numeric_grade is not None else "SUBMITTED"
+            num_grade = sub.numeric_grade
+            submitted_at = sub.submitted_at
+        else:
+            status = "PENDING"
+            num_grade = None
+            submitted_at = None
+            
+        exp_list.append({
+            "id": exp.id,
+            "title": exp.title,
+            "description": exp.description,
+            "theory": exp.theory,
+            "instructions": exp.instructions,
+            "expected_output": exp.expected_output,
+            "starter_code": exp.starter_code,
+            "language": exp.language,
+            "tolerance": exp.tolerance,
+            "lab_type": exp.lab_type,
+            "submission_status": status,
+            "numeric_grade": num_grade,
+            "submitted_at": submitted_at
+        })
+        
+    return {
+        "lab": {
+            "id": lab.id,
+            "name": lab.name,
+            "course": course.name if course else "Unknown",
+            "semester": semester.name if semester else None
+        },
+        "experiments": exp_list
     }
