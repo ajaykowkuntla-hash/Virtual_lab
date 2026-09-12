@@ -1,8 +1,37 @@
 import requests
 import sys
 import time
+import os
 
 BASE_URL = "http://127.0.0.1:8000"
+
+def warmup_execution_service():
+    print("Warming up remote execution service...", end=" ", flush=True)
+    octave_url = os.environ.get("OCTAVE_SERVICE_URL", "https://virtual-lab-1-75ey.onrender.com/execute")
+    
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "iot-backend", ".env")
+    if not os.environ.get("OCTAVE_SERVICE_URL") and os.path.exists(env_path):
+        try:
+            with open(env_path, "r") as f:
+                for line in f:
+                    if line.startswith("OCTAVE_SERVICE_URL="):
+                        octave_url = line.strip().split("=", 1)[1]
+        except Exception:
+            pass
+            
+    health_url = octave_url.replace("/execute", "/health")
+    
+    try:
+        resp = requests.get(health_url, timeout=90)
+        if resp.status_code == 200:
+            print("✅ Execution service ready.")
+            return True
+        else:
+            print(f"❌ FAILED to warmup service. Status: {resp.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ ERROR warming up service: {e}")
+        return False
 
 def login(username, password):
     resp = requests.post(f"{BASE_URL}/auth/login", data={"username": username, "password": password})
@@ -46,6 +75,9 @@ def main():
         
     all_passed = True
     
+    if not warmup_execution_service():
+        sys.exit(1)
+        
     # Dashboard regression
     res, _ = test("Faculty Dashboard", "GET", "/faculty/analytics", faculty_vance_token)
     if not res: all_passed = False
