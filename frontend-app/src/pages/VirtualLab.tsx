@@ -82,12 +82,15 @@ export const VirtualLab: React.FC = () => {
           setScriptText(response.data.starter_code);
         }
         
-        if (response.data.language === 'octave') {
+        const labType = (response.data.lab_type || '').toLowerCase();
+        if (labType === 'matlab_execution') {
           setEnvironment('matlab');
-        } else if (response.data.language === 'python' || response.data.language === 'cpp' || response.data.language === 'c' || response.data.language === 'java') {
+        } else if (labType === 'python_execution' || labType === 'programming_execution') {
           setEnvironment('python');
-        } else if (response.data.language === 'circuit') {
+        } else if (labType === 'iot_simulation' || labType === 'circuit_simulation') {
           setEnvironment('iot');
+        } else {
+          setEnvironment('unknown');
         }
       } catch (err) {
         console.error("Failed to load experiment:", err);
@@ -117,7 +120,8 @@ export const VirtualLab: React.FC = () => {
   const [bottomTab, setBottomTab] = useState<BottomTab>('terminal');
   const [isPlotModalOpen, setIsPlotModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
-  const [environment, setEnvironment] = useState<'selection' | 'matlab' | 'python' | 'iot'>('selection');
+  const [environment, setEnvironment] = useState<'unknown' | 'matlab' | 'python' | 'iot'>('unknown');
+  const [isLaunched, setIsLaunched] = useState(false);
   
   // Monaco editor ref
   const editorRef = useRef<any>(null);
@@ -323,81 +327,96 @@ export const VirtualLab: React.FC = () => {
         </div>
       )}
 
-      {!isExperimentLoading && experiment && environment === 'selection' && (
-        <div className="flex flex-col h-full max-w-6xl mx-auto py-12 fade-in-up stagger-1">
+      {!isExperimentLoading && experiment && !isLaunched && (
+        <div className="flex flex-col h-full max-w-4xl mx-auto py-12 fade-in-up stagger-1">
           <div className="mb-12 text-center space-y-4">
             <h1 className="text-[48px] font-semibold text-primary tracking-tight leading-tight">
-              Select Your Environment
+              Ready to Launch
             </h1>
             <p className="text-secondary font-body-lg max-w-2xl mx-auto">
-              Choose the appropriate engine to run this experiment. Your workspace will automatically adapt to your selection.
+              Please confirm your environment to begin the experiment.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* MATLAB Card */}
-            <div 
-              onClick={() => setEnvironment('matlab')}
-              className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl hover:shadow-2xl hover:border-neural-blue/30 transition-all cursor-pointer group flex flex-col"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-neural-blue/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-[32px] text-neural-blue">functions</span>
+          <div className="flex justify-center">
+            {environment === 'matlab' && (
+              <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl flex flex-col items-center max-w-md w-full">
+                <div className="w-16 h-16 rounded-2xl bg-neural-blue/10 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-[32px] text-neural-blue">functions</span>
+                </div>
+                <h3 className="text-h3 font-semibold text-primary mb-2 text-center">Environment</h3>
+                <p className="text-xl font-bold text-neural-blue mb-8 text-center">MATLAB / Octave</p>
+                <button 
+                  onClick={() => setIsLaunched(true)}
+                  className="w-full flex items-center justify-center bg-neural-blue text-white py-4 rounded-xl font-label-caps text-label-caps font-bold hover:bg-neural-blue/90 transition-colors"
+                >
+                  Launch MATLAB / Octave <span className="material-symbols-outlined text-[16px] ml-2">arrow_forward</span>
+                </button>
               </div>
-              <h3 className="text-h3 font-semibold text-primary mb-2">MATLAB / Octave</h3>
-              <p className="text-secondary font-body-md mb-8 flex-1">
-                Advanced mathematical computing environment for signal processing, control systems, and data analysis.
-              </p>
-              <div className="flex items-center text-neural-blue font-label-caps text-label-caps font-bold">
-                Launch IDE <span className="material-symbols-outlined text-[16px] ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            )}
+            
+            {environment === 'python' && (
+              <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl flex flex-col items-center max-w-md w-full">
+                <div className="w-16 h-16 rounded-2xl bg-success-emerald/10 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-[32px] text-success-emerald">code_blocks</span>
+                </div>
+                <h3 className="text-h3 font-semibold text-primary mb-2 text-center">Environment</h3>
+                <p className="text-xl font-bold text-success-emerald mb-8 text-center">Python Data Science</p>
+                <button 
+                  onClick={() => setIsLaunched(true)}
+                  className="w-full flex items-center justify-center bg-success-emerald text-white py-4 rounded-xl font-label-caps text-label-caps font-bold hover:bg-success-emerald/90 transition-colors"
+                >
+                  Launch Python <span className="material-symbols-outlined text-[16px] ml-2">arrow_forward</span>
+                </button>
               </div>
-            </div>
+            )}
+            
+            {environment === 'iot' && (
+              <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl flex flex-col items-center max-w-md w-full">
+                <div className="w-16 h-16 rounded-2xl bg-warning-amber/10 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-[32px] text-warning-amber">memory</span>
+                </div>
+                <h3 className="text-h3 font-semibold text-primary mb-2 text-center">Environment</h3>
+                <p className="text-xl font-bold text-warning-amber mb-8 text-center">IoT Builder</p>
+                <button 
+                  onClick={() => setIsLaunched(true)}
+                  className="w-full flex items-center justify-center bg-warning-amber text-white py-4 rounded-xl font-label-caps text-label-caps font-bold hover:bg-warning-amber/90 transition-colors"
+                >
+                  Launch IoT Builder <span className="material-symbols-outlined text-[16px] ml-2">arrow_forward</span>
+                </button>
+              </div>
+            )}
 
-            {/* Python Card */}
-            <div 
-              onClick={() => setEnvironment('python')}
-              className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl hover:shadow-2xl hover:border-success-emerald/30 transition-all cursor-pointer group flex flex-col"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-success-emerald/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-[32px] text-success-emerald">code_blocks</span>
+            {environment === 'unknown' && (
+              <div className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl flex flex-col items-center max-w-md w-full">
+                <div className="w-16 h-16 rounded-2xl bg-error/10 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-[32px] text-error">error_outline</span>
+                </div>
+                <h3 className="text-h3 font-semibold text-primary mb-2 text-center">Environment Not Configured</h3>
+                <p className="text-secondary font-body-md text-center mb-8">
+                  This experiment does not have a recognized execution environment configured.
+                </p>
+                <Link 
+                  to="/student/labs"
+                  className="w-full flex items-center justify-center bg-surface-container-high text-primary border border-border-subtle py-4 rounded-xl font-label-caps text-label-caps font-bold hover:bg-border-subtle transition-colors"
+                >
+                  Return to Labs
+                </Link>
               </div>
-              <h3 className="text-h3 font-semibold text-primary mb-2">Python Data Science</h3>
-              <p className="text-secondary font-body-md mb-8 flex-1">
-                Jupyter-style environment preloaded with NumPy, Pandas, and Matplotlib for machine learning and scripting.
-              </p>
-              <div className="flex items-center text-success-emerald font-label-caps text-label-caps font-bold">
-                Launch IDE <span className="material-symbols-outlined text-[16px] ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </div>
-            </div>
-
-            {/* IoT Builder Card */}
-            <div 
-              onClick={() => setEnvironment('iot')}
-              className="glass-panel p-8 rounded-3xl border border-white/60 shadow-xl hover:shadow-2xl hover:border-warning-amber/30 transition-all cursor-pointer group flex flex-col"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-warning-amber/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-[32px] text-warning-amber">memory</span>
-              </div>
-              <h3 className="text-h3 font-semibold text-primary mb-2">IoT Builder</h3>
-              <p className="text-secondary font-body-md mb-8 flex-1">
-                Drag-and-drop hardware simulator. Build circuits, wire microcontrollers, and deploy firmware instantly.
-              </p>
-              <div className="flex items-center text-warning-amber font-label-caps text-label-caps font-bold">
-                Launch Simulator <span className="material-symbols-outlined text-[16px] ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       )}
 
-      {!isExperimentLoading && experiment && environment === 'matlab' && (
+      {!isExperimentLoading && experiment && environment === 'matlab' && isLaunched && (
         <>
           <div className="flex flex-col h-full fade-in-up stagger-1">
         
             {/* Header Bar */}
             <header className="flex flex-col md:flex-row md:items-center justify-between mb-4 bg-[#f8f9fa] p-4 rounded-2xl border border-[#e5e7eb] shadow-sm">
-              <button onClick={() => setEnvironment('selection')} className="flex items-center gap-2 text-secondary hover:text-primary transition-colors font-label-caps text-label-caps font-bold">
+              <button onClick={() => window.history.back()} className="flex items-center gap-2 text-secondary hover:text-primary transition-colors font-label-caps text-label-caps font-bold">
                 <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                Change Environment
+                Back to Lab
               </button>
               <div className="flex items-center gap-3 mt-4 md:mt-0 flex-wrap">
                 <span className="px-3 py-1 bg-[#e5e7eb] rounded-full font-sans text-xs text-[#4b5563] font-medium">
@@ -749,17 +768,17 @@ export const VirtualLab: React.FC = () => {
         </>
       )}
 
-      {!isExperimentLoading && experiment && environment === 'python' && (
-        <MultiLangIDE onReturn={() => setEnvironment('selection')} />
+      {!isExperimentLoading && experiment && environment === 'python' && isLaunched && (
+        <MultiLangIDE onReturn={() => window.history.back()} />
       )}
 
-      {!isExperimentLoading && experiment && environment === 'iot' && (
+      {!isExperimentLoading && experiment && environment === 'iot' && isLaunched && (
         <div className="flex flex-col items-center justify-center h-full fade-in-up stagger-1 space-y-6">
           <span className="material-symbols-outlined text-[64px] text-warning-amber">memory</span>
           <h2 className="text-h2 font-semibold text-primary">IoT Hardware Builder</h2>
           <p className="text-secondary font-body-lg">The Drag-and-Drop Hardware Simulator is currently under construction.</p>
-          <button onClick={() => setEnvironment('selection')} className="px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high border border-border-subtle text-primary font-label-caps text-label-caps font-bold transition-all">
-            Return to Selection
+          <button onClick={() => window.history.back()} className="px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high border border-border-subtle text-primary font-label-caps text-label-caps font-bold transition-all">
+            Return to Lab
           </button>
         </div>
       )}

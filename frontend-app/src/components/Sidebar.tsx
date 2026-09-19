@@ -81,6 +81,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollap
               {!isCollapsed && <span className="block text-[10px] font-bold text-secondary uppercase tracking-widest px-4 mb-2">Academics</span>}
               <div className="space-y-1">
                 <NavLink 
+                  to="/admin/institutions" 
+                  className={({ isActive }) => 
+                    `flex items-center gap-3 px-4 py-2.5 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
+                  } 
+                  title="Institutions"
+                >
+                  <span className="material-symbols-outlined">account_balance</span>
+                  {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">Institutions</span>}
+                </NavLink>
+                <NavLink 
                   to="/admin/departments" 
                   className={({ isActive }) => 
                     `flex items-center gap-3 px-4 py-2.5 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
@@ -174,6 +184,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollap
               >
                 <span className="material-symbols-outlined">science</span>
                 {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">Manage Labs</span>}
+              </NavLink>
+            )}
+            {!isFaculty && (
+              <NavLink 
+                to="/student/labs" 
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-4 py-3 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
+                } 
+                title="My Labs"
+              >
+                <span className="material-symbols-outlined">biotech</span>
+                {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">My Labs</span>}
+              </NavLink>
+            )}
+            {!isFaculty && (
+              <NavLink 
+                to="/environments" 
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-4 py-3 duration-200 rounded-lg ${isActive ? 'bg-primary text-white shadow-sm' : 'text-secondary hover:bg-surface-container-high transition-all'} ${isCollapsed ? 'justify-center w-12 h-12 p-0' : ''}`
+                } 
+                title="Environments"
+              >
+                <span className="material-symbols-outlined">terminal</span>
+                {!isCollapsed && <span className="font-label-caps text-label-caps uppercase">Environments</span>}
               </NavLink>
             )}
             <NavLink 

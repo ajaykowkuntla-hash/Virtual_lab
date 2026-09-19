@@ -2,6 +2,8 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { StudentDashboard } from './pages/StudentDashboard'
 import { FacultyDashboard } from './pages/FacultyDashboard'
+import { MyLabs } from './pages/MyLabs'
+import Environments from './pages/Environments'
 import { Login } from './pages/Login'
 import { VirtualLab } from './pages/VirtualLab'
 import { LabDetails } from './pages/LabDetails'
@@ -22,6 +24,7 @@ import { ManageDepartments } from './pages/admin/ManageDepartments'
 import { ManageSemesters } from './pages/admin/ManageSemesters'
 import { ManageCourses } from './pages/admin/ManageCourses'
 import { ManageExperiments } from './pages/admin/ManageExperiments'
+import { ManageInstitutions } from './pages/admin/ManageInstitutions'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 const AuthLoadingSpinner = () => (
@@ -85,6 +88,18 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/student/labs" element={
+            <ProtectedRoute allowedRole="student">
+              <MyLabs />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/environments" element={
+            <ProtectedRoute allowedRole="student">
+              <Environments />
+            </ProtectedRoute>
+          } />
+
           <Route path="/student/labs/:labId" element={
             <ProtectedRoute allowedRole="student">
               <LabDetails />
@@ -122,6 +137,11 @@ function App() {
           <Route path="/admin/labs" element={
             <ProtectedRoute allowedRole="admin">
               <AdminManageLabs />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/institutions" element={
+            <ProtectedRoute allowedRole="admin">
+              <ManageInstitutions />
             </ProtectedRoute>
           } />
           <Route path="/admin/departments" element={
